@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment and Secret Files
+.env
+.env*.local
+*.env
+
+# Build Output
+dist/
+
+# Logs and Reports
+logs/
+reports/
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary data files
+data/*.json
+!data/.gitkeep
