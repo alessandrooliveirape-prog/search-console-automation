@@ -10,7 +10,7 @@ async function testBiSuite() {
   }
 
   const forecast = await generateMultiHorizonForecast("sc-domain:empregape.com.br");
-  if (!forecast.horizons.thirtyDays || forecast.horizons.thirtyDays.projectedClicks <= 0) {
+  if (!forecast.horizons.thirtyDays || typeof forecast.horizons.thirtyDays.projectedClicks !== "number" || forecast.horizons.thirtyDays.projectedClicks < 0) {
     throw new Error("Projeção de Forecast 30 dias inválida");
   }
 

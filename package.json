@@ -10,7 +10,7 @@
     "run-now": "node dist/src/index.js --run-now",
     "dev": "tsx src/index.ts --run-now",
     "get-token": "tsx scripts/get-refresh-token.ts",
-    "test": "tsx tests/cache.test.ts && tsx tests/resilience.test.ts && tsx tests/seoScore.test.ts && tsx tests/bi.test.ts",
+    "test": "tsx tests/cache.test.ts && tsx tests/resilience.test.ts && tsx tests/seoScore.test.ts && tsx tests/bi.test.ts && tsx tests/bi5.test.ts && tsx tests/bi6.test.ts",
     "lint": "tsc --noEmit"
   },
   "keywords": [

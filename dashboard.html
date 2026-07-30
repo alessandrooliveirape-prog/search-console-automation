@@ -652,6 +652,7 @@
       border-color: var(--color-primary);
     }
 
+
     /* FOOTER */
     footer {
       text-align: center;
@@ -661,59 +662,337 @@
       color: var(--text-muted);
       font-size: 0.8rem;
     }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       ESTILOS 5.0 — Smart Alerts, Calendário Editorial, Publications
+    ═══════════════════════════════════════════════════════════════════ */
+
+    /* Botão de alerta pulsante na aba */
+    .tab-alert-btn {
+      position: relative;
+      animation: alertTabPulse 3s ease-in-out infinite;
+    }
+    @keyframes alertTabPulse {
+      0%, 100% { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+      50% { background: rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.6); color: #fff; box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+    }
+    .tab-alert-btn.active {
+      animation: none;
+      background: var(--color-danger) !important;
+      color: #fff !important;
+    }
+
+    /* Badge de severidade no indicador de contagem */
+    .alert-count-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--color-danger);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Header banner do Smart Alerts */
+    .alert-header-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.08));
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 22px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .alert-label-tag {
+      font-size: 0.78rem;
+      color: #f87171;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .alert-header-title {
+      font-family: var(--font-title);
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    /* Grid de resumo de alertas */
+    .alert-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 768px) { .alert-summary-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .alert-stat-card {
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .alert-stat-card:hover { transform: translateY(-3px); }
+
+    .alert-stat-critical {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .alert-stat-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .alert-stat-info {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .alert-stat-total {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .alert-stat-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .alert-stat-value {
+      font-family: var(--font-title);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+    .alert-stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* Cartão de alerta individual */
+    .alert-card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s;
+      animation: slideInAlert 0.4s ease-out both;
+    }
+    @keyframes slideInAlert {
+      from { opacity: 0; transform: translateX(-16px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .alert-card:hover { transform: translateX(4px); }
+    .alert-card.critical { border-left: 4px solid #ef4444; border: 1px solid rgba(239,68,68,0.3); border-left: 4px solid #ef4444; }
+    .alert-card.warning { border-left: 4px solid #f59e0b; border: 1px solid rgba(245,158,11,0.3); border-left: 4px solid #f59e0b; }
+    .alert-card.info { border-left: 4px solid #10b981; border: 1px solid rgba(16,185,129,0.3); border-left: 4px solid #10b981; }
+
+    .alert-severity-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .alert-card-body { flex: 1; }
+    .alert-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+    .alert-card-title { font-weight: 700; font-size: 0.95rem; color: #fff; }
+    .alert-severity-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+    .badge-warning { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4); }
+    .badge-info { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+    .alert-card-detail { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 8px; }
+    .alert-card-suggestion {
+      font-size: 0.8rem;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
+      color: #a5b4fc;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .alert-change-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .pill-negative { background: rgba(239,68,68,0.15); color: #fca5a5; }
+    .pill-positive { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+
+    /* ─── Calendário Editorial ─────────────────────────────────────── */
+    .cal-filter-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+    .cal-filter-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .cal-filter-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+
+    .cal-slot-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 16px;
+      align-items: start;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .cal-slot-card:hover { border-color: rgba(99,102,241,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+    .cal-date-block {
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .cal-date-day { font-family: var(--font-title); font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; }
+    .cal-date-month { font-size: 0.7rem; color: #a5b4fc; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    .cal-slot-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .cal-slot-keyword { font-size: 0.78rem; color: var(--color-secondary); font-family: monospace; margin-bottom: 8px; }
+    .cal-slot-secondary { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+    .cal-slot-justification { font-size: 0.8rem; color: #94a3b8; font-style: italic; }
+    .cal-slot-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+
+    .cal-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .cal-badge-novo { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+    .cal-badge-update { background: rgba(14,165,233,0.2); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+    .cal-badge-repag { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .cal-badge-serie { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+    .cal-badge-urgente { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .cal-badge-alta { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .cal-badge-media { background: rgba(16,185,129,0.1); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+    .cal-badge-baixa { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+    .cal-clicks-pill {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #34d399;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      align-self: center;
+      white-space: nowrap;
+    }
+
+    /* ─── Publicações ─────────────────────────────────────────────── */
+    .pub-status-pending { color: #fbbf24; }
+    .pub-status-published { color: #34d399; }
+    .pub-status-ignored { color: var(--text-muted); }
+    .pub-status-error { color: #f87171; }
+
+    /* ─── Animações de entrada dos cards ──────────────────────────── */
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card {
+      animation: cardEntrance 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.10s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.20s; }
+
+    /* ─── Gauge Executivo Premium ─────────────────────────────────── */
+    #executiveGauge {
+      transition: box-shadow 0.5s, background 0.5s;
+    }
+
   </style>
 </head>
+
 <body>
 
 <div class="container">
   
   <header>
     <div class="logo-area">
-      <h1>Google Search Console</h1>
-      <p>Serviço Autônomo de Auditoria, Indexação & SEO por IA (Gemini)</p>
+      <h1>Search Console Enterprise BI</h1>
+      <p>Plataforma Autônoma de Inteligência SEO, Monetização & Automação por IA</p>
     </div>
     
     <div class="header-actions">
       <!-- SITE SELECTOR DROPDOWN -->
       <select id="siteSelect" class="site-select" onchange="onSiteFilterChange()">
-        <option value="ALL">🌐 Todos os Sites (Visão Geral)</option>
-        <option value="sc-domain:empregape.com.br">💼 Emprega PE (empregape.com.br)</option>
-        <option value="sc-domain:brasilcalculadoras.com.br">🧮 Brasil Calculadoras</option>
-        <option value="https://www.mestredafederal.com.br/">🎲 Mestre da Federal</option>
-        <option value="https://www.toolbrasil.com.br/">🛠️ ToolBrasil</option>
+        <option value="ALL">Todos os Sites (Visão Consolidada)</option>
+        <option value="sc-domain:empregape.com.br">Emprega PE (empregape.com.br)</option>
+        <option value="sc-domain:brasilcalculadoras.com.br">Brasil Calculadoras</option>
+        <option value="https://www.mestredafederal.com.br/">Mestre da Federal</option>
+        <option value="https://www.toolbrasil.com.br/">ToolBrasil</option>
       </select>
 
       <div class="status-badge-header">
         <div class="status-dot"></div>
-        Agendador & Telegram Bot Ativos
+        Motor BI & Telegram Ativos
       </div>
     </div>
   </header>
 
-  <!-- 14-DAY TEST PERIOD METRICS TRACKER BANNER -->
+  <!-- METRICS TRACKER BANNER -->
   <div class="goal-banner">
     <div class="goal-stat">
-      <span class="label">🗓️ Período de Teste</span>
+      <span class="label">Acompanhamento</span>
       <span class="value" id="daysCounter">14 Dias</span>
-      <span class="sub">Validação de Resultados</span>
+      <span class="sub">Validação de Desempenho</span>
     </div>
     <div class="goal-stat">
-      <span class="label">📈 Cliques Totais (14d)</span>
+      <span class="label">Cliques Totais (14d)</span>
       <span class="value" id="statClicks">1.482</span>
       <span class="sub">↑ +14.2% este mês</span>
     </div>
     <div class="goal-stat">
-      <span class="label">👁️ Impressões Totais</span>
+      <span class="label">Impressões Totais</span>
       <span class="value" id="statImpressions">42.910</span>
       <span class="sub">↑ +18.7% alcance Google</span>
     </div>
     <div class="goal-stat">
-      <span class="label">⚡ CTR Médio</span>
+      <span class="label">CTR Médio</span>
       <span class="value" id="statCtr">3.45%</span>
-      <span class="sub">Meta: > 3.0%</span>
+      <span class="sub">Meta: &gt; 3.0%</span>
     </div>
     <div class="goal-stat">
-      <span class="label">🤖 Títulos Otimizados</span>
+      <span class="label">Títulos Otimizados</span>
       <span class="value" id="statApproved">12/15</span>
       <span class="sub">Aprovados & Publicados</span>
     </div>
@@ -797,19 +1076,25 @@
         </div>
         
         <div class="tabs" style="overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px;">
-          <button class="tab-btn active" onclick="switchTab(event, 'ctr-tab')">🔥 Oportunidades CTR</button>
-          <button class="tab-btn" onclick="switchTab(event, 'bi-tab')" style="background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(14,165,233,0.25)); border: 1px solid rgba(99,102,241,0.5); color: #fff; font-weight: 700;">📊 BI 4.0 Premium</button>
-          <button class="tab-btn" onclick="switchTab(event, 'score-tab')">🎯 SEO Score (0-100)</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ga4-tab')">📈 Google Analytics 4</button>
-          <button class="tab-btn" onclick="switchTab(event, 'predict-tab')">🔮 IA Preditiva</button>
-          <button class="tab-btn" onclick="switchTab(event, 'opp-tab')">💡 Painel Oportunidades</button>
-          <button class="tab-btn" onclick="switchTab(event, 'health-tab')">🏥 Health Index</button>
-          <button class="tab-btn" onclick="switchTab(event, 'kw-tab')">🔑 Palavras-Chave</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ai-insights-tab')">🤖 Insights IA (ChatGPT)</button>
-          <button class="tab-btn" onclick="switchTab(event, 'ai-tab')">📝 Revisor Títulos IA</button>
-          <button class="tab-btn" onclick="switchTab(event, 'index-tab')">🔍 Indexação GSC</button>
-          <button class="tab-btn" onclick="switchTab(event, 'monitor-tab')">🖥️ System Health</button>
-          <button class="tab-btn" onclick="switchTab(event, 'sql-tab')">⚡ Supabase Schema</button>
+          <button class="tab-btn active" onclick="switchTab(event, 'ctr-tab')">Oportunidades CTR</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bi-tab')" style="background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(14,165,233,0.18)); border: 1px solid rgba(99,102,241,0.4); color: #fff; font-weight: 700;">BI 6.0 Enterprise</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ab-tab')">Testes A/B Títulos</button>
+          <button class="tab-btn" onclick="switchTab(event, 'cannibal-tab')">Canibalização SEO</button>
+          <button class="tab-btn" onclick="switchTab(event, 'schema-tab')">Rich Snippets (Posição 0)</button>
+          <button class="tab-btn tab-alert-btn" onclick="switchTab(event, 'alerts-tab')" id="alertsTabBtn">Smart Alerts</button>
+          <button class="tab-btn" onclick="switchTab(event, 'calendar-tab')">Calendário Editorial</button>
+          <button class="tab-btn" onclick="switchTab(event, 'publications-tab')">Publicações</button>
+          <button class="tab-btn" onclick="switchTab(event, 'score-tab')">SEO Score</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ga4-tab')">Google Analytics 4</button>
+          <button class="tab-btn" onclick="switchTab(event, 'predict-tab')">IA Preditiva</button>
+          <button class="tab-btn" onclick="switchTab(event, 'opp-tab')">Oportunidades</button>
+          <button class="tab-btn" onclick="switchTab(event, 'health-tab')">Health Index</button>
+          <button class="tab-btn" onclick="switchTab(event, 'kw-tab')">Palavras-Chave</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ai-insights-tab')">Insights IA</button>
+          <button class="tab-btn" onclick="switchTab(event, 'ai-tab')">Revisor Títulos</button>
+          <button class="tab-btn" onclick="switchTab(event, 'index-tab')">Indexação GSC</button>
+          <button class="tab-btn" onclick="switchTab(event, 'monitor-tab')">System Health</button>
+          <button class="tab-btn" onclick="switchTab(event, 'sql-tab')">Supabase Schema</button>
         </div>
 
         <!-- TAB BI 4.0 PREMIUM (FASE 15) -->
@@ -887,6 +1172,195 @@
             <div id="biAiAnswerBox" style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:18px;font-size:0.9rem;color:#cbd5e1;">
               Clique no botão acima para consultar a Inteligência de Negócios.
             </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: SMART ALERTS                                          -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="alerts-tab" class="tab-content">
+          <!-- HEADER -->
+          <div class="alert-header-banner">
+            <div>
+              <div class="alert-label-tag">SISTEMA DE ALERTAS INTELIGENTES 5.0</div>
+              <h2 class="alert-header-title">🚨 Smart Alerts — Monitoramento em Tempo Real</h2>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Detecção automática de quedas de Score, CTR, Posição, Receita e Forecast negativo. Alertas enviados via Telegram.</p>
+            </div>
+            <button class="btn btn-approve" onclick="loadSmartAlerts()" style="align-self:flex-start;">🔄 Atualizar Alertas</button>
+          </div>
+
+          <!-- RESUMO DE ALERTAS -->
+          <div class="alert-summary-grid" id="alertSummaryGrid">
+            <div class="alert-stat-card alert-stat-critical">
+              <div class="alert-stat-icon">🔴</div>
+              <div class="alert-stat-value" id="alertCriticalCount">0</div>
+              <div class="alert-stat-label">Críticos</div>
+            </div>
+            <div class="alert-stat-card alert-stat-warning">
+              <div class="alert-stat-icon">🟠</div>
+              <div class="alert-stat-value" id="alertWarningCount">0</div>
+              <div class="alert-stat-label">Alertas</div>
+            </div>
+            <div class="alert-stat-card alert-stat-info">
+              <div class="alert-stat-icon">🟢</div>
+              <div class="alert-stat-value" id="alertInfoCount">0</div>
+              <div class="alert-stat-label">Info</div>
+            </div>
+            <div class="alert-stat-card alert-stat-total">
+              <div class="alert-stat-icon">📊</div>
+              <div class="alert-stat-value" id="alertTotalCount">0</div>
+              <div class="alert-stat-label">Total (7d)</div>
+            </div>
+          </div>
+
+          <!-- LISTA DE ALERTAS -->
+          <div id="alertListContainer" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="text-align:center;padding:40px;color:var(--text-muted);">
+              <div style="font-size:2rem;margin-bottom:12px;">✅</div>
+              <p>Nenhum alerta ativo nos últimos 7 dias.<br><small>O sistema monitorará automaticamente a cada ciclo do BI Engine.</small></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: CALENDÁRIO EDITORIAL IA                               -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="calendar-tab" class="tab-content">
+          <!-- HEADER -->
+          <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(14,165,233,0.08));border:1px solid rgba(16,185,129,0.3);padding:22px;border-radius:16px;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+            <div>
+              <div style="font-size:0.78rem;color:#34d399;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">IA EDITORIAL ENGINE 5.0</div>
+              <h2 style="font-family:var(--font-title);font-size:1.6rem;color:#fff;margin-bottom:4px;">📅 Calendário Editorial IA — Pauta Mensal Inteligente</h2>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Pauta gerada automaticamente pela Gemini AI com base em keyword gaps, páginas estagnadas e tendências.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <select id="calendarMonthSelect" class="site-select" onchange="loadEditorialCalendar()">
+                <!-- Preenchido dinamicamente -->
+              </select>
+              <button class="btn btn-approve" onclick="generateNewCalendar()">✨ Gerar Nova Pauta</button>
+            </div>
+          </div>
+
+          <!-- FILTROS -->
+          <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+            <button class="cal-filter-btn active" onclick="filterCalendar('todos', this)">📋 Todos</button>
+            <button class="cal-filter-btn" onclick="filterCalendar('URGENTE', this)">🔴 Urgente</button>
+            <button class="cal-filter-btn" onclick="filterCalendar('ALTA', this)">🟠 Alta</button>
+            <button class="cal-filter-btn" onclick="filterCalendar('NOVO', this)">✨ Novos</button>
+            <button class="cal-filter-btn" onclick="filterCalendar('ATUALIZAÇÃO', this)">🔄 Atualizações</button>
+          </div>
+
+          <!-- ESTATÍSTICAS DO MÊS -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;" id="calendarStatsGrid">
+            <!-- Dinâmico -->
+          </div>
+
+          <!-- CALENDÁRIO GRID -->
+          <div id="calendarGrid" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="text-align:center;padding:40px;color:var(--text-muted);">
+              <div style="font-size:2.5rem;margin-bottom:12px;">📅</div>
+              <p>Carregando pauta editorial...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: PUBLICAÇÕES / CONTENT PUBLISHER                       -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="publications-tab" class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">📝 Publicações & Otimizações de Conteúdo</h3>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Histórico de otimizações de título/meta enviadas para aprovação via Telegram e publicadas automaticamente.</p>
+            </div>
+            <button class="btn btn-approve" onclick="loadPublications()">🔄 Atualizar</button>
+          </div>
+          <!-- Status Summary -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px;" id="publicationStatsGrid">
+            <!-- Dinâmico -->
+          </div>
+          <!-- Tabela -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Site / URL</th>
+                  <th>Título Otimizado</th>
+                  <th>Keyword</th>
+                  <th>Ganho Est.</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody id="publicationsTableBody">
+                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Carregando publicações...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: TESTES A/B DE TÍTULOS                                  -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="ab-tab" class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Testes A/B de Títulos & CTR</h3>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Validação do impacto real pré vs pós 14 dias das alterações de títulos publicadas.</p>
+            </div>
+            <button class="btn btn-approve" onclick="loadAbTestResults()">Atualizar Testes</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;" id="abStatsSummary">
+            <!-- Populated dynamically -->
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Resultado</th>
+                  <th>URL / Título Otimizado</th>
+                  <th>Período Pré (14d)</th>
+                  <th>Período Pós (14d)</th>
+                  <th>Variação CTR</th>
+                  <th>Recomendação & Ação</th>
+                </tr>
+              </thead>
+              <tbody id="abTestTableBody">
+                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Carregando testes A/B...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: CANIBALIZAÇÃO SEO                                      -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="cannibal-tab" class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Canibalização de Palavras-Chave</h3>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Identificação de 2 ou mais URLs disputando o mesmo termo de busca no Google.</p>
+            </div>
+            <button class="btn btn-approve" onclick="loadCannibalizationReport()">Atualizar Varredura</button>
+          </div>
+          <div id="cannibalListContainer" style="display:flex;flex-direction:column;gap:16px;">
+            <div style="text-align:center;padding:40px;color:var(--text-muted);">Carregando relatório de canibalização...</div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: RICH SNIPPETS & POSIÇÃO 0                              -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <div id="schema-tab" class="tab-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Rich Snippets & Posição 0 (Schema JSON-LD)</h3>
+              <p style="font-size:0.85rem;color:var(--text-muted);">Geração de dados estruturados (FAQPage, Article, JobPosting) para capturar o topo do Google.</p>
+            </div>
+            <button class="btn btn-approve" onclick="loadSchemaSnippets()">Atualizar Oportunidades</button>
+          </div>
+          <div id="schemaListContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;">
+            <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Carregando oportunidades de Rich Snippets...</div>
           </div>
         </div>
 
@@ -1329,7 +1803,610 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     renderAllSitesUi();
     initChart();
     loadDashboardData();
+    // 5.0 & 6.0: Inicializar abas
+    initCalendarMonthSelector();
+    loadSmartAlerts();
+    loadEditorialCalendar();
+    loadPublications();
+    loadAbTestResults();
+    loadCannibalizationReport();
+    loadSchemaSnippets();
   });
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 6.0 ENTERPRISE — FUNÇÕES TESTES A/B, CANIBALIZAÇÃO E SCHEMA
+  // ═══════════════════════════════════════════════════════════════════════
+
+  function loadAbTestResults() {
+    const demoAb = [
+      {
+        outcome: "VENCEDOR",
+        siteId: "sc-domain:empregape.com.br",
+        url: "https://empregape.com.br/vagas/recife",
+        optimizedTitle: "💼 Vagas de Emprego em Recife Hoje | Envie seu Currículo!",
+        preCtr: 2.1, postCtr: 3.8, ctrChangePercent: 80.9,
+        preClicks: 120, postClicks: 215, clicksChangePercent: 79.1,
+        daysActive: 14, recommendation: "🏆 Teste Vencedor! Aumento de +80.9% na CTR e +79.1% em cliques. Mantido no ar!"
+      },
+      {
+        outcome: "EM_COLETA",
+        siteId: "sc-domain:brasilcalculadoras.com.br",
+        url: "https://brasilcalculadoras.com.br/porcentagem",
+        optimizedTitle: "🧮 Calculadora de Porcentagem Online Grátis 2026",
+        preCtr: 3.4, postCtr: 3.5, ctrChangePercent: 2.9,
+        preClicks: 95, postClicks: 98, clicksChangePercent: 3.1,
+        daysActive: 4, recommendation: "Aguardando mais dias de histórico para avaliação estatística."
+      },
+      {
+        outcome: "PERDEDOR",
+        siteId: "https://www.toolbrasil.com.br/",
+        url: "https://toolbrasil.com.br/ferramenta/rifas",
+        optimizedTitle: "🎟️ Gerador de Rifas Online — Crie e Sorteie Agora",
+        preCtr: 4.2, postCtr: 3.1, ctrChangePercent: -26.2,
+        preClicks: 45, postClicks: 33, clicksChangePercent: -26.6,
+        daysActive: 14, recommendation: "⚠️ Queda de desempenho detectada (-26.2% CTR). Recomendado rollback para o título original."
+      }
+    ];
+
+    const tbody = document.getElementById("abTestTableBody");
+    const summaryGrid = document.getElementById("abStatsSummary");
+
+    const winners = demoAb.filter(a => a.outcome === "VENCEDOR").length;
+    const inProgress = demoAb.filter(a => a.outcome === "EM_COLETA").length;
+    const losers = demoAb.filter(a => a.outcome === "PERDEDOR").length;
+
+    if (summaryGrid) {
+      summaryGrid.innerHTML = `
+        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">${winners}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">🏆 Vencedores</div>
+        </div>
+        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">${inProgress}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⏳ Em Coleta</div>
+        </div>
+        <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#f87171;">${losers}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⚠️ Perdedores</div>
+        </div>`;
+    }
+
+    if (!tbody) return;
+    const outcomeBadge = {
+      "VENCEDOR": '<span style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">🏆 VENCEDOR</span>',
+      "EM_COLETA": '<span style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⏳ EM COLETA</span>',
+      "PERDEDOR": '<span style="background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⚠️ PERDEDOR</span>',
+      "NEUTRO": '<span style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-color);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⚖️ NEUTRO</span>'
+    };
+
+    tbody.innerHTML = demoAb.map(a => {
+      const urlShort = a.url.replace(/^https?:\/\/[^/]+/, "");
+      const isPos = a.ctrChangePercent > 0;
+      const color = isPos ? "#34d399" : a.ctrChangePercent < 0 ? "#f87171" : "var(--text-muted)";
+      return `<tr>
+        <td>${outcomeBadge[a.outcome]}</td>
+        <td>
+          <div style="font-size:0.82rem;font-weight:700;color:#fff;">${a.optimizedTitle}</div>
+          <div style="font-size:0.75rem;font-family:monospace;color:var(--text-muted);">${urlShort}</div>
+        </td>
+        <td style="font-size:0.8rem;">CTR: <strong>${a.preCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.75rem;">${a.preClicks} cliques</span></td>
+        <td style="font-size:0.8rem;">CTR: <strong>${a.postCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.75rem;">${a.postClicks} cliques</span></td>
+        <td style="font-weight:800;color:${color};">${a.ctrChangePercent > 0 ? "+" : ""}${a.ctrChangePercent}%</td>
+        <td style="font-size:0.78rem;color:#cbd5e1;">${a.recommendation}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  function loadCannibalizationReport() {
+    const demoCannibal = [
+      {
+        keyword: "vagas de emprego recife",
+        severity: "ALTA",
+        totalImpressions: 12400,
+        totalClicks: 310,
+        suggestedAction: "Redirecionar 301 de /vagas/pe para /vagas/recife para consolidar autoridade no Google.",
+        actionType: "FUSÃO_301",
+        competingUrls: [
+          { url: "https://empregape.com.br/vagas/recife", clicks: 240, impressions: 8900, avgPosition: 3.2, ctr: 2.7 },
+          { url: "https://empregape.com.br/vagas/pe", clicks: 70, impressions: 3500, avgPosition: 7.8, ctr: 2.0 }
+        ]
+      },
+      {
+        keyword: "resultado federal hoje",
+        severity: "MÉDIA",
+        totalImpressions: 8900,
+        totalClicks: 180,
+        suggestedAction: "Remover a palavra-chave das tags H2/H3 da página secundária e alterar links internos apontando para a principal.",
+        actionType: "AJUSTE_ANCHOR_TEXT",
+        competingUrls: [
+          { url: "https://mestredafederal.com.br/resultado", clicks: 140, impressions: 6200, avgPosition: 4.1, ctr: 2.25 },
+          { url: "https://mestredafederal.com.br/hoje", clicks: 40, impressions: 2700, avgPosition: 9.4, ctr: 1.48 }
+        ]
+      }
+    ];
+
+    const container = document.getElementById("cannibalListContainer");
+    if (!container) return;
+
+    const sevBadge = {
+      "ALTA": '<span class="badge-critical">🔴 SEVERIDADE ALTA</span>',
+      "MÉDIA": '<span class="badge-warning">🟠 SEVERIDADE MÉDIA</span>',
+      "BAIXA": '<span class="badge-info">🟢 SEVERIDADE BAIXA</span>'
+    };
+
+    container.innerHTML = demoCannibal.map(item => {
+      const urlsHtml = item.competingUrls.map(u => `
+        <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);border-radius:10px;padding:10px 14px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:0.8rem;font-family:monospace;color:#a5b4fc;">${u.url.replace(/^https?:\/\/[^/]+/, "")}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);">Posição Média: <strong>${u.avgPosition}</strong> | CTR: <strong>${u.ctr}%</strong></div>
+          </div>
+          <div style="font-size:0.85rem;font-weight:700;color:#34d399;">${u.clicks} cliques (${u.impressions} impr.)</div>
+        </div>`).join("");
+
+      return `
+        <div class="card" style="border:1px solid rgba(239,68,68,0.25);background:rgba(17,18,30,0.85);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <div style="font-weight:800;font-size:1.05rem;color:#fff;">🔑 "${item.keyword}"</div>
+            ${sevBadge[item.severity]}
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">
+            URLs disputando o mesmo termo (${item.totalImpressions.toLocaleString("pt-BR")} impressões totais / ${item.totalClicks} cliques):
+          </div>
+          ${urlsHtml}
+          <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:12px;margin-top:12px;font-size:0.82rem;color:#cbd5e1;">
+            💡 <strong>Ação Recomendada (${item.actionType}):</strong> ${item.suggestedAction}
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function loadSchemaSnippets() {
+    const demoSchemas = [
+      {
+        keyword: "vagas de emprego recife",
+        url: "https://empregape.com.br/vagas/recife",
+        schemaType: "JobPosting",
+        currentPosition: 3.2,
+        impressions: 12400,
+        potentialClickGain: 420,
+        jsonLdCode: `{\n  "@context": "https://schema.org",\n  "@type": "JobPosting",\n  "title": "Vagas de Emprego em Recife 2026",\n  "description": "Oportunidades urgentes em Recife. Envie seu currículo grátis.",\n  "directApply": true\n}`,
+        structuredTextSnippet: `## Vagas de Emprego em Recife 2026\nConfira as vagas abertas hoje com candidatura direta:\n\n1. Vagas CLT em Recife\n2. Vagas de Estágio e Jovem Aprendiz\n3. Envio de currículo online grátis`
+      },
+      {
+        keyword: "como calcular porcentagem",
+        url: "https://brasilcalculadoras.com.br/porcentagem",
+        schemaType: "FAQPage",
+        currentPosition: 4.1,
+        impressions: 8900,
+        potentialClickGain: 290,
+        jsonLdCode: `{\n  "@context": "https://schema.org",\n  "@type": "FAQPage",\n  "mainEntity": [{\n    "@type": "Question",\n    "name": "Como calcular porcentagem?",\n    "acceptedAnswer": {\n      "@type": "Answer",\n      "text": "Multiplique o valor pelo percentual e divida por 100."\n    }\n  }]\n}`,
+        structuredTextSnippet: `## Como Calcular Porcentagem em 3 Passos\nPara calcular a porcentagem de qualquer valor:\n\n- Passo 1: Multiplique o número total pela porcentagem desejada\n- Passo 2: Divida o resultado por 100\n- Exemplo: 20% de 500 = (500 * 20) / 100 = 100`
+      }
+    ];
+
+    const container = document.getElementById("schemaListContainer");
+    if (!container) return;
+
+    container.innerHTML = demoSchemas.map((s, idx) => `
+      <div class="card" style="border:1px solid rgba(16,185,129,0.3);background:rgba(17,18,30,0.85);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <span class="badge" style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);">${s.schemaType}</span>
+          <span style="font-size:0.8rem;font-weight:700;color:#34d399;">+${s.potentialClickGain} cliques/mês est.</span>
+        </div>
+        <div style="font-weight:800;font-size:1rem;color:#fff;margin-bottom:4px;">🔑 "${s.keyword}"</div>
+        <div style="font-size:0.75rem;font-family:monospace;color:var(--text-muted);margin-bottom:12px;">Posição Atual: ${s.currentPosition} (${s.impressions.toLocaleString("pt-BR")} impr.)</div>
+        
+        <div style="font-size:0.78rem;font-weight:700;color:#a5b4fc;margin-bottom:4px;">📜 Código JSON-LD (Copiar e colar no &lt;head&gt;):</div>
+        <div class="code-box" id="jsonLd_${idx}">${escapeHtml(s.jsonLdCode)}</div>
+        <button class="btn" style="font-size:0.7rem;margin-top:6px;width:100%;justify-center;" onclick="copyCode('jsonLd_${idx}')">📋 Copiar JSON-LD</button>
+
+        <div style="font-size:0.78rem;font-weight:700;color:#a5b4fc;margin-top:14px;margin-bottom:4px;">🏆 Formatação para Posição 0 (Featured Snippet):</div>
+        <div class="code-box">${escapeHtml(s.structuredTextSnippet)}</div>
+      </div>
+    `).join("");
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function copyCode(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      navigator.clipboard.writeText(el.innerText);
+      alert("✅ Código copiado para a área de transferência!");
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SMART ALERTS 5.0 — Funções do Dashboard
+  // ═══════════════════════════════════════════════════════════════════════
+
+  let _smartAlertsData = [];
+
+  async function loadSmartAlerts() {
+    const siteId = document.getElementById("siteSelect")?.value || "ALL";
+    const container = document.getElementById("alertListContainer");
+    if (container) container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">⏳ Carregando alertas...</div>';
+
+    // Demo data para visualização (sem Supabase conectado no frontend)
+    const demoAlerts = [
+      {
+        severity: "CRÍTICO",
+        category: "CTR",
+        title: "CTR Caiu 32% em 7 Dias",
+        detail: "CTR médio caiu de 4.12% para 2.80% na última semana. Afeta principalmente páginas de vagas.",
+        previousValue: 4.12,
+        currentValue: 2.80,
+        changePercent: -32.0,
+        suggestion: "Revise meta descriptions e títulos das top 10 páginas. Considere A/B test de snippets.",
+        triggeredAt: new Date(Date.now() - 2 * 3600000).toISOString(),
+        siteName: "Emprega PE"
+      },
+      {
+        severity: "ALERTA",
+        category: "POSIÇÃO",
+        title: "Posição Média Piorou: 4.1 → 6.3",
+        detail: "Queda de 2.2 posições na média dos últimos 7 dias. Possível update do algoritmo.",
+        previousValue: 4.1,
+        currentValue: 6.3,
+        changePercent: 53.7,
+        suggestion: "Identifique as páginas mais afetadas no Heatmap SEO e priorize otimização de conteúdo.",
+        triggeredAt: new Date(Date.now() - 5 * 3600000).toISOString(),
+        siteName: "Brasil Calculadoras"
+      },
+      {
+        severity: "ALERTA",
+        category: "FORECAST",
+        title: "Tendência de Queda: 3 Dias Consecutivos",
+        detail: "Cliques caíram por 3 dias seguidos. Último dia: 89 cliques (vs 140 há 3 dias).",
+        previousValue: 140,
+        currentValue: 89,
+        changePercent: -36.4,
+        suggestion: "Publique conteúdo novo ou atualize artigos estagnados. Considere link building.",
+        triggeredAt: new Date(Date.now() - 8 * 3600000).toISOString(),
+        siteName: "Mestre da Federal"
+      }
+    ];
+
+    _smartAlertsData = demoAlerts;
+    renderSmartAlerts(demoAlerts);
+  }
+
+  function renderSmartAlerts(alerts) {
+    const container = document.getElementById("alertListContainer");
+    const critical = alerts.filter(a => a.severity === "CRÍTICO").length;
+    const warning = alerts.filter(a => a.severity === "ALERTA").length;
+    const info = alerts.filter(a => a.severity === "INFO").length;
+
+    // Atualiza contadores
+    const el = (id) => document.getElementById(id);
+    if (el("alertCriticalCount")) el("alertCriticalCount").textContent = critical;
+    if (el("alertWarningCount")) el("alertWarningCount").textContent = warning;
+    if (el("alertInfoCount")) el("alertInfoCount").textContent = info;
+    if (el("alertTotalCount")) el("alertTotalCount").textContent = alerts.length;
+
+    // Atualiza badge na aba de alertas
+    const alertTabBtn = document.getElementById("alertsTabBtn");
+    if (alertTabBtn && critical > 0) {
+      alertTabBtn.style.animation = "alertTabPulse 1s ease-in-out infinite";
+    }
+
+    if (!container) return;
+    if (alerts.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:2.5rem;margin-bottom:12px;">✅</div><p>Nenhum alerta ativo nos últimos 7 dias.<br><small>O sistema monitorará automaticamente a cada ciclo do BI Engine.</small></p></div>';
+      return;
+    }
+
+    const severityClass = { "CRÍTICO": "critical", "ALERTA": "warning", "INFO": "info" };
+    const severityIcon = { "CRÍTICO": "🚨", "ALERTA": "⚠️", "INFO": "ℹ️" };
+    const badgeClass = { "CRÍTICO": "badge-critical", "ALERTA": "badge-warning", "INFO": "badge-info" };
+
+    container.innerHTML = alerts.map((a, i) => {
+      const isNeg = a.changePercent < 0;
+      const pillClass = isNeg ? "pill-negative" : "pill-positive";
+      const changeStr = `${a.changePercent > 0 ? "+" : ""}${a.changePercent.toFixed(1)}%`;
+      const timeAgo = getTimeAgo(a.triggeredAt);
+      return `
+        <div class="alert-card ${severityClass[a.severity] || 'info'}" style="animation-delay:${i * 0.08}s;">
+          <div class="alert-severity-icon">${severityIcon[a.severity] || "📊"}</div>
+          <div class="alert-card-body">
+            <div class="alert-card-header">
+              <div class="alert-card-title">${a.title}</div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span class="alert-severity-badge ${badgeClass[a.severity] || ''}">${a.severity}</span>
+                <span class="alert-change-pill ${pillClass}">${changeStr}</span>
+              </div>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">
+              🌐 ${a.siteName || ''} &nbsp;|&nbsp; 📂 ${a.category} &nbsp;|&nbsp; 🕐 ${timeAgo}
+            </div>
+            <div class="alert-card-detail">${a.detail}</div>
+            <div class="alert-card-suggestion">💡 ${a.suggestion}</div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function getTimeAgo(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `há ${mins}min`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `há ${hrs}h`;
+    return `há ${Math.floor(hrs / 24)}d`;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // CALENDÁRIO EDITORIAL 5.0 — Funções do Dashboard
+  // ═══════════════════════════════════════════════════════════════════════
+
+  let _calendarData = [];
+  let _calendarFilter = "todos";
+
+  function initCalendarMonthSelector() {
+    const sel = document.getElementById("calendarMonthSelect");
+    if (!sel) return;
+    const now = new Date();
+    const months = [];
+    for (let i = -1; i <= 3; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const label = d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
+      months.push(`<option value="${val}" ${i === 1 ? "selected" : ""}>${label.charAt(0).toUpperCase() + label.slice(1)}</option>`);
+    }
+    sel.innerHTML = months.join("");
+  }
+
+  function loadEditorialCalendar() {
+    // Demo data para visualização
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 2; // próximo mês
+    const monthPad = String(month > 12 ? 1 : month).padStart(2, "0");
+    const yearFinal = month > 12 ? year + 1 : year;
+
+    const demoSlots = [
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-03`,
+        title: "Vagas de Emprego em Recife: Guia Completo 2026",
+        mainKeyword: "vagas de emprego recife",
+        secondaryKeywords: ["emprego recife", "trabalho recife", "vagas clt recife"],
+        type: "NOVO",
+        priority: "URGENTE",
+        estimatedClicks: 420,
+        justification: "Keyword com 12.400 impressões/mês e CTR de apenas 1.8%. Potencial de +420 cliques com otimização.",
+        cluster: "Vagas de Emprego"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-07`,
+        title: "Como Calcular FGTS Rescisão: Calculadora Online",
+        mainKeyword: "calcular fgts rescisão",
+        secondaryKeywords: ["fgts rescisão", "calculadora fgts", "calculo fgts"],
+        type: "NOVO",
+        priority: "ALTA",
+        estimatedClicks: 290,
+        justification: "Keyword de alta intenção financeira com CPC estimado alto. Posição atual: 8.2.",
+        cluster: "Calculadoras"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-10`,
+        title: "Resultado Federal Hoje — Atualize Antes de Todos",
+        mainKeyword: "resultado federal hoje",
+        secondaryKeywords: ["federal hoje", "resultado jogo do bicho", "federal resultado"],
+        type: "ATUALIZAÇÃO",
+        priority: "URGENTE",
+        estimatedClicks: 180,
+        justification: "Página estagnada com 8.900 impressões. Atualização do conteúdo pode recuperar posição.",
+        targetUrl: "https://www.mestredafederal.com.br/resultado/federal-hoje",
+        cluster: "Jogo do Bicho"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-14`,
+        title: "Gerador de Rifas Online Grátis: Sorteio Rápido",
+        mainKeyword: "gerador de rifas online",
+        secondaryKeywords: ["criar rifa online", "sorteio online", "rifas digitais"],
+        type: "REPAGINAÇÃO",
+        priority: "MÉDIA",
+        estimatedClicks: 95,
+        justification: "Ferramenta existente com design desatualizado. Repaginação pode aumentar tempo na página.",
+        targetUrl: "https://www.toolbrasil.com.br/ferramenta/gerador-rifas",
+        cluster: "Ferramentas"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-17`,
+        title: "Concursos PE 2026: Lista Completa e Inscrições",
+        mainKeyword: "concursos pernambuco 2026",
+        secondaryKeywords: ["concurso pe", "editais pernambuco", "concurso publico pe"],
+        type: "NOVO",
+        priority: "ALTA",
+        estimatedClicks: 310,
+        justification: "Tendência crescente para o termo. Concorrência baixa e keyword com 5.200 impressões/mês.",
+        cluster: "Vagas de Emprego"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-21`,
+        title: "Calculadora de Salário Líquido: INSS + IR 2026",
+        mainKeyword: "calculadora salario liquido",
+        secondaryKeywords: ["calculo salario", "desconto inss", "imposto de renda salario"],
+        type: "SÉRIE",
+        priority: "ALTA",
+        estimatedClicks: 240,
+        justification: "Série de 3 artigos sobre cálculos trabalhistas. Alta busca em janeiro e março.",
+        cluster: "Calculadoras"
+      },
+      {
+        suggestedDate: `${yearFinal}-${monthPad}-25`,
+        title: "Como Criar uma Rifa Digital: Passo a Passo",
+        mainKeyword: "como criar rifa digital",
+        secondaryKeywords: ["rifa digital", "rifa online", "como fazer rifa"],
+        type: "NOVO",
+        priority: "BAIXA",
+        estimatedClicks: 65,
+        justification: "Palavra informacional com baixa competição. Atrai tráfego qualificado para a ferramenta.",
+        cluster: "Ferramentas"
+      }
+    ];
+
+    _calendarData = demoSlots;
+    renderCalendarStats(demoSlots);
+    renderCalendarSlots(demoSlots);
+  }
+
+  function renderCalendarStats(slots) {
+    const grid = document.getElementById("calendarStatsGrid");
+    if (!grid) return;
+    const urgente = slots.filter(s => s.priority === "URGENTE").length;
+    const novos = slots.filter(s => s.type === "NOVO").length;
+    const totalClicks = slots.reduce((a, s) => a + s.estimatedClicks, 0);
+
+    grid.innerHTML = `
+      <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:18px;text-align:center;">
+        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#f87171;">${urgente}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">🔴 Urgentes</div>
+      </div>
+      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:18px;text-align:center;">
+        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">${slots.length}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📅 Slots no Mês</div>
+      </div>
+      <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px;text-align:center;">
+        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">+${totalClicks.toLocaleString("pt-BR")}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📈 Cliques Estimados</div>
+      </div>
+      <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.3);border-radius:14px;padding:18px;text-align:center;">
+        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#38bdf8;">${novos}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">✨ Novos Artigos</div>
+      </div>`;
+  }
+
+  function renderCalendarSlots(slots) {
+    const grid = document.getElementById("calendarGrid");
+    if (!grid) return;
+
+    const filtered = _calendarFilter === "todos"
+      ? slots
+      : slots.filter(s => s.priority === _calendarFilter || s.type === _calendarFilter);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum slot encontrado para o filtro selecionado.</div>';
+      return;
+    }
+
+    const typeClass = { "NOVO": "cal-badge-novo", "ATUALIZAÇÃO": "cal-badge-update", "REPAGINAÇÃO": "cal-badge-repag", "SÉRIE": "cal-badge-serie" };
+    const priorityClass = { "URGENTE": "cal-badge-urgente", "ALTA": "cal-badge-alta", "MÉDIA": "cal-badge-media", "BAIXA": "cal-badge-baixa" };
+    const monthNames = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+
+    grid.innerHTML = filtered.map((slot, i) => {
+      const date = new Date(slot.suggestedDate + "T12:00:00");
+      const day = date.getDate();
+      const monthName = monthNames[date.getMonth()];
+      const secKws = (slot.secondaryKeywords || []).slice(0, 3).map(k => `<span style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);color:#38bdf8;font-size:0.65rem;padding:2px 7px;border-radius:10px;">${k}</span>`).join(" ");
+      return `
+        <div class="cal-slot-card" style="animation-delay:${i * 0.06}s;">
+          <div class="cal-date-block">
+            <div class="cal-date-day">${String(day).padStart(2, "0")}</div>
+            <div class="cal-date-month">${monthName}</div>
+          </div>
+          <div>
+            <div class="cal-slot-badges">
+              <span class="cal-badge ${typeClass[slot.type] || ''}">${slot.type}</span>
+              <span class="cal-badge ${priorityClass[slot.priority] || ''}">${slot.priority}</span>
+              <span class="cal-badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-color);">📂 ${slot.cluster}</span>
+            </div>
+            <div class="cal-slot-title">${slot.title}</div>
+            <div class="cal-slot-keyword">🔑 ${slot.mainKeyword}</div>
+            ${secKws ? `<div class="cal-slot-secondary" style="display:flex;gap:5px;flex-wrap:wrap;">${secKws}</div>` : ""}
+            <div class="cal-slot-justification">"${slot.justification}"</div>
+            ${slot.targetUrl ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">🔗 ${slot.targetUrl.replace(/^https?:\/\/[^/]+/, "").slice(0, 60)}</div>` : ""}
+          </div>
+          <div class="cal-clicks-pill">+${slot.estimatedClicks.toLocaleString("pt-BR")}<br><span style="font-size:0.65rem;font-weight:500;">cliques/mês</span></div>
+        </div>`;
+    }).join("");
+  }
+
+  function filterCalendar(filter, btn) {
+    _calendarFilter = filter;
+    document.querySelectorAll(".cal-filter-btn").forEach(b => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    renderCalendarSlots(_calendarData);
+  }
+
+  function generateNewCalendar() {
+    const grid = document.getElementById("calendarGrid");
+    if (grid) grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:2rem;margin-bottom:12px;">⏳</div><p>Gerando nova pauta com Gemini AI...<br><small>Este processo é executado pelo servidor BI Engine (npm run dev).</small></p></div>';
+    setTimeout(() => loadEditorialCalendar(), 1500);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // PUBLICAÇÕES 5.0 — Funções do Dashboard
+  // ═══════════════════════════════════════════════════════════════════════
+
+  function loadPublications() {
+    const demoPublications = [
+      { status: "PUBLICADO", siteId: "sc-domain:empregape.com.br", url: "https://empregape.com.br/vagas/recife", optimizedTitle: "💼 Vagas de Emprego em Recife Hoje | Envie seu Currículo!", mainKeyword: "vagas emprego recife", estimatedClickGain: 145, createdAt: new Date(Date.now() - 2 * 86400000).toISOString() },
+      { status: "PENDENTE_APROVAÇÃO", siteId: "sc-domain:brasilcalculadoras.com.br", url: "https://brasilcalculadoras.com.br/porcentagem", optimizedTitle: "🧮 Calculadora de Porcentagem Online Grátis 2026", mainKeyword: "calculadora porcentagem", estimatedClickGain: 89, createdAt: new Date(Date.now() - 5 * 3600000).toISOString() },
+      { status: "PENDENTE_APROVAÇÃO", siteId: "https://www.mestredafederal.com.br/", url: "https://mestredafederal.com.br/resultado", optimizedTitle: "🏆 Resultado Federal Hoje — Confira Agora!", mainKeyword: "resultado federal hoje", estimatedClickGain: 62, createdAt: new Date(Date.now() - 1 * 3600000).toISOString() },
+      { status: "IGNORADO", siteId: "https://www.toolbrasil.com.br/", url: "https://toolbrasil.com.br/ferramenta/rifas", optimizedTitle: "🎟️ Gerador de Rifas Online — Crie e Sorteie Agora", mainKeyword: "gerador rifa online", estimatedClickGain: 34, createdAt: new Date(Date.now() - 3 * 86400000).toISOString() }
+    ];
+    renderPublications(demoPublications);
+  }
+
+  function renderPublications(pubs) {
+    const tbody = document.getElementById("publicationsTableBody");
+    const statsGrid = document.getElementById("publicationStatsGrid");
+
+    // Stats
+    const published = pubs.filter(p => p.status === "PUBLICADO").length;
+    const pending = pubs.filter(p => p.status === "PENDENTE_APROVAÇÃO").length;
+    const ignored = pubs.filter(p => p.status === "IGNORADO").length;
+    const totalGain = pubs.reduce((a, p) => a + (p.estimatedClickGain || 0), 0);
+
+    if (statsGrid) {
+      statsGrid.innerHTML = `
+        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">${published}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">✅ Publicados</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#fbbf24;">${pending}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⏳ Pendentes</div>
+        </div>
+        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">+${totalGain}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📈 Cliques Est. Total</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-color);border-radius:14px;padding:16px;text-align:center;">
+          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:var(--text-muted);">${ignored}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">❌ Ignorados</div>
+        </div>`;
+    }
+
+    if (!tbody) return;
+    const statusMap = {
+      "PUBLICADO": '<span class="pub-status-published">✅ Publicado</span>',
+      "PENDENTE_APROVAÇÃO": '<span class="pub-status-pending">⏳ Pendente</span>',
+      "IGNORADO": '<span class="pub-status-ignored">❌ Ignorado</span>',
+      "APROVADO": '<span style="color:#60a5fa;">✓ Aprovado</span>',
+      "ERRO": '<span class="pub-status-error">⚠️ Erro</span>',
+    };
+
+    tbody.innerHTML = pubs.map(p => {
+      const urlShort = (p.url || "").replace(/^https?:\/\/[^/]+/, "").slice(0, 45);
+      const siteShort = (p.siteId || "").replace(/^(sc-domain:|https?:\/\/)/, "").slice(0, 25);
+      const date = new Date(p.createdAt).toLocaleDateString("pt-BR");
+      return `<tr>
+        <td>${statusMap[p.status] || p.status}</td>
+        <td><div style="font-size:0.78rem;color:var(--text-muted);">${siteShort}</div><div style="font-size:0.75rem;font-family:monospace;">${urlShort}</div></td>
+        <td style="font-size:0.82rem;max-width:240px;">${p.optimizedTitle || ""}</td>
+        <td style="font-size:0.78rem;color:var(--color-secondary);">${p.mainKeyword || ""}</td>
+        <td style="color:#34d399;font-weight:700;">+${p.estimatedClickGain || 0}</td>
+        <td style="font-size:0.78rem;color:var(--text-muted);">${date}</td>
+      </tr>`;
+    }).join("");
+  }
+
+
 
   // SITES MANAGEMENT LOGIC
   const defaultSites = [

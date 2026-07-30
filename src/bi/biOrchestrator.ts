@@ -13,6 +13,14 @@ import { generateMultiHorizonForecast } from "./forecastEngine";
 import { trackSiteGoals } from "./goalsTracker";
 import { generateBiReport } from "./pdfReportGenerator";
 import { logEvent } from "../services/logger";
+// ── Fase 5.0: Smart Alerts, Content Publisher & Editorial Calendar ──
+import { runSmartAlertsEngine } from "./smartAlerts";
+import { runContentPublisher } from "./contentPublisher";
+import { generateEditorialCalendar } from "./editorialCalendar";
+// ── Fase 6.0: A/B Testing, Cannibalization & Schema Position 0 ──
+import { runAbTestingEngine } from "./abTestingEngine";
+import { runCannibalizationDetector } from "./cannibalizationDetector";
+import { runSchemaSnippetGenerator } from "./schemaSnippetGenerator";
 
 export async function runCompleteBiEngine() {
   console.log("[BI Orchestrator 4.0] Executando rotina central de Business Intelligence com dados reais...");
@@ -150,11 +158,36 @@ export async function runCompleteBiEngine() {
     await generateExecutiveSummary();
     await generateBiReport("executive");
 
+    // ── Fase 5.0: Novos módulos Enterprise ──────────────────────────────
+    // 12. Smart Alerts — detecta quedas e envia alertas Telegram
+    await runSmartAlertsEngine();
+
+    // 13. Content Publisher — identifica páginas para otimização e solicita aprovação
+    await runContentPublisher();
+
+    // 14. Editorial Calendar — gera pauta mensal com IA (apenas às sextas-feiras)
+    const today = new Date();
+    const isFriday = today.getDay() === 5;
+    if (isFriday) {
+      await generateEditorialCalendar();
+      console.log("[BI Orchestrator 5.0] Calendário Editorial gerado (sexta-feira).");
+    }
+
+    // ── Fase 6.0: Módulos Enterprise A/B Testing, Cannibalization e Schema ──
+    // 15. A/B Testing Engine — valida impacto de títulos alterados pós 14d
+    await runAbTestingEngine();
+
+    // 16. Cannibalization Guard — detecta URLs disputando mesma palavra
+    await runCannibalizationDetector();
+
+    // 17. Schema & Position 0 Generator — gera JSON-LD e trechos para Posição 0
+    await runSchemaSnippetGenerator();
+
     const durationMs = Date.now() - startTime;
-    logEvent("system", "INFO", `[BI Orchestrator 4.0] Sucesso! Executado em ${durationMs}ms`, { durationMs, success: true });
+    logEvent("system", "INFO", `[BI Orchestrator 6.0] Sucesso! Executado em ${durationMs}ms`, { durationMs, success: true });
     return true;
   } catch (err: any) {
-    logEvent("errors", "ERROR", `[BI Orchestrator 4.0] Falha na execução central: ${err.message}`, { error: err });
+    logEvent("errors", "ERROR", `[BI Orchestrator 6.0] Falha na execução central: ${err.message}`, { error: err });
     return false;
   }
 }

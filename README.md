@@ -1,23 +1,22 @@
-# 🚀 Search Console Automation — Enterprise SEO & BI
+# 🚀 Search Console Automation — 6.0 Enterprise BI & AI
 
-Serviço autônomo de produção em **Node.js + TypeScript** que integra Google Search Console, Google Analytics 4, Gemini AI e Supabase para monitoramento, auto-cura e inteligência de negócios de múltiplos domínios.
+Serviço autônomo de produção em **Node.js + TypeScript** que integra Google Search Console, Google Analytics 4, Gemini AI, Supabase e WordPress API para monitoramento, auto-cura, inteligência preditiva e automação de negócios para múltiplos domínios.
 
 ---
 
-## 🌟 Principais Recursos
+## 🌟 Principais Recursos (Versão 6.0 Enterprise)
 
 | Módulo | Descrição |
 |--------|-----------|
-| 🩺 **Auto-Cura de Indexação** | Detecta erros via GSC URL Inspection API → Gemini diagnostica → Google Indexing API v3 + IndexNow notificam buscadores automaticamente |
-| 🤖 **SEO IA (Gemini)** | Analisa oportunidades de CTR e gera Title/Meta otimizados para as top 5 páginas diariamente |
-| 📱 **Aprovação via Telegram** | Otimizações enviadas ao Telegram com botões inline "Aprovar / Ignorar" — aprovação dispara rebuild do site |
-| 🔔 **WhatsApp + Telegram** | Alertas de indexação, resultados de SEO e relatórios enviados via CallMeBot e Telegram Bot |
-| 📊 **BI 4.0 Premium** | 10+ módulos: Data Warehouse, Forecast Multi-Horizonte (30/60/90/180/365 dias), Revenue Intelligence, SEO HeatMap, Keyword Clusters, Competitive Insight |
-| 📈 **GA4 Real** | Coleta dados reais de usuários, sessões, bounce rate, top fontes e dispositivos via Service Account |
-| 🔮 **Análise Preditiva** | Regressão linear real sobre histórico do GSC para projeções de tráfego e receita |
-| 🔄 **Rebuild Automático** | Após aprovação no Telegram, executa `npm run build` no diretório do site correspondente |
-| 📉 **Rastreamento Antes/Depois** | Compara métricas GSC 14 dias antes vs depois de cada otimização aprovada |
-| 🌐 **IndexNow** | Submissão automática de URLs para Bing, Yandex e Seznam após auto-cura |
+| 🧪 **Testes A/B de Títulos** | Compara o impacto real pré (14d) vs pós (14d) de cada título alterado. Classifica como **Vencedor**, **Neutro** ou **Perdedor** e sugere Rollback automático em caso de queda. |
+| ⚔️ **Canibalização Guard** | Detecta quando 2+ URLs do mesmo site disputam o mesmo termo de busca no Google. Recomenda **Redirect 301**, **Diferenciação de Intenção** ou **Ajuste de Anchor Text**. |
+| 🎯 **Rich Snippets & Posição 0** | Identifica páginas na Posição 2-8 com alto volume e gera código **JSON-LD (FAQPage, Article, JobPosting, HowTo)** e trechos estruturados para capturar o topo do Google. |
+| 🚨 **Smart Alerts Engine** | Monitora variações de Score, CTR, Posição e Receita em tempo real. Notifica proativamente via Telegram com sugestões de ação. |
+| 📝 **Content Publisher WP** | Identifica páginas com baixo CTR, otimiza título/meta via Gemini, envia aprovação interativa ao Telegram e publica na REST API do WordPress. |
+| 📅 **Calendário Editorial IA** | Pauta mensal gerada automaticamente com base em *keyword gaps* e páginas estagnadas, organizada por datas, tipos e prioridades. |
+| 🩺 **Auto-Cura de Indexação** | Detecta erros via GSC URL Inspection API → Gemini diagnostica → Google Indexing API v3 + IndexNow notificam buscadores automaticamente. |
+| 📊 **Data Warehouse & Forecast** | Persistência diária acumulativa no Supabase e projeções preditivas para 30, 60, 90, 180 e 365 dias via regressão temporal. |
+| 🎨 **UI/UX SaaS Enterprise** | Dashboard SPA moderno no estilo Vercel/Linear com 16+ abas de observabilidade, métricas em tempo real e visualização de dados refinada. |
 
 ---
 
@@ -32,136 +31,68 @@ Serviço autônomo de produção em **Node.js + TypeScript** que integra Google 
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📁 Módulos da Camada BI (`src/bi/`)
 
 ```
-search-console-automation/
-├── src/
-│   ├── bi/                # Módulos BI (DataWarehouse, Forecast, Revenue, HeatMap, Keywords...)
-│   ├── config/            # env.ts, google.ts, sites.ts, supabase.ts
-│   ├── jobs/              # Cron jobs (dailyPerformance, autoRemediate, urlAudit, trackPerformance...)
-│   ├── services/          # GSC, GA4, Gemini, Notifications, IndexingAPI, Monitoring...
-│   └── index.ts           # Orquestrador central e scheduler
-├── tests/                 # Testes unitários
-├── data/urls.json         # URLs monitoradas pelo auto-remediate job
-├── dashboard.html         # Painel SPA com 13+ abas de observabilidade
-├── supabase_schema.sql    # Schema PostgreSQL completo
-└── .env.example           # Exemplo de variáveis de ambiente
+src/bi/
+├── abTestingEngine.ts       # Validação de impacto pré vs pós 14d dos títulos (Fase 21)
+├── cannibalizationDetector.ts # Detecção de URLs disputando a mesma palavra-chave (Fase 22)
+├── schemaSnippetGenerator.ts  # Gerador de Schema JSON-LD e Posição 0 (Fase 23)
+├── smartAlerts.ts            # Motor de alertas inteligentes via Telegram (Fase 16)
+├── contentPublisher.ts       # Otimização e publicação de conteúdo no WordPress (Fase 17)
+├── editorialCalendar.ts      # Calendário e pauta editorial mensal gerada por IA (Fase 18)
+├── dataWarehouse.ts          # Persistência histórica diária no Supabase (Fase 1)
+├── executiveSummary.ts        # Cálculo do Score Executivo 0-100 (Fase 2 & 13)
+├── growthAnalytics.ts        # Aceleração e análise de tendências temporal (Fase 3)
+├── contentIntelligence.ts    # Ranking e classificação de páginas (Fase 4)
+├── seoHeatmap.ts             # Gerador de Mapa de Calor de URLs (Fase 5)
+├── revenueIntelligence.ts    # Cruzamento GSC + GA4 + AdSense (Fase 6)
+├── keywordCluster.ts         # Agrupamento semântico de palavras-chave (Fase 7)
+├── linkIntelligence.ts        # Mapeamento de links internos e órfãs (Fase 8)
+├── competitiveInsight.ts     # Monitor de ultrapassagens e posições (Fase 9)
+├── conversationalAi.ts       # Q&A de negócios em linguagem natural (Fase 10)
+├── forecastEngine.ts         # Projeção preditiva 30d a 365d (Fase 11)
+├── goalsTracker.ts           # Acompanhamento de metas enterprise (Fase 12)
+├── pdfReportGenerator.ts     # Gerador de relatórios executivos em Markdown/PDF (Fase 14)
+└── biOrchestrator.ts         # Orquestrador central integrado de Business Intelligence
 ```
 
 ---
 
-## 🛠️ Instalação
+## 🛠️ Execução & Testes
 
-### 1. Instalar dependências
+### Executar Lint e Compilação TypeScript
 ```bash
-npm install
+npm run lint    # Validação do compilador TypeScript (0 erros)
+npm run build   # Compilação para código de produção em dist/
 ```
 
-### 2. Configurar `.env`
-Copie `.env.example` para `.env` e preencha:
-
-```env
-# Google OAuth2 (Search Console + Indexing API)
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_REFRESH_TOKEN=
-
-# Supabase
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_KEY=
-
-# Gemini AI
-GEMINI_API_KEY=
-
-# GA4 Service Account (recomendado — não expira)
-GA4_CLIENT_EMAIL=sua-service-account@projeto.iam.gserviceaccount.com
-GA4_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-
-# GA4 Property IDs por site (Admin > Detalhes da propriedade)
-GA4_PROPERTY_EMPREGAPE=properties/535761279
-GA4_PROPERTY_BRASILCALCULADORAS=properties/547560325
-GA4_PROPERTY_MESTREDAFEDERAL=properties/547580188
-GA4_PROPERTY_TOOLBRASIL=properties/547564707
-
-# Notificações
-CALLMEBOT_API_KEY=          # WhatsApp via CallMeBot
-TELEGRAM_BOT_TOKEN=         # Token do Bot Telegram
-TELEGRAM_CHAT_ID=           # Seu Chat ID
-
-# IndexNow (opcional — crie o arquivo .txt na pasta public/ de cada site)
-INDEXNOW_KEY=antigravityseokey2026
-
-# PageSpeed Insights (opcional — sem key: 25 req/dia)
-PAGESPEED_API_KEY=
-```
-
-### 3. Autenticar OAuth2 (Search Console)
+### Rodar a Suíte Completa de Testes
 ```bash
-npm run get-token
+npm test        # Executa testes de Cache, Resiliência, SEO Score, BI 4.0, BI 5.0 e BI 6.0
+```
+
+### Rodar a Aplicação em Modo Produção / Dev
+```bash
+npm run dev     # Roda em tempo real via tsx
+npm start       # Roda a build compilada em JS (dist/src/index.js)
 ```
 
 ---
 
-## 💻 Comandos
+## 🗄️ Estrutura de Tabelas Supabase PostgreSQL
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Inicia o serviço com watch mode |
-| `npm start` | Inicia o serviço compilado |
-| `npm run build` | Compila TypeScript |
-| `npm run now` | Executa todos os jobs imediatamente (sem esperar cron) |
-| `npm test` | Roda a suíte de testes |
-| `npm run get-token` | Gera novo token OAuth2 |
-
----
-
-## ⏱️ Agendamento Automático (Cron)
-
-| Job | Frequência | O que faz |
-|-----|-----------|-----------|
-| `dailyPerformanceJob` | Diário (02h) | Coleta GSC → Supabase → Gemini gera otimizações → Telegram |
-| `autoRemediateJob` | Diário (03h) | Inspeciona URLs → diagnostica → Indexing API + IndexNow |
-| `urlAuditJob` | Diário (04h) | Auditoria completa de indexação |
-| `sitemapCheckJob` | Semanal | Verifica sitemaps e salva no Supabase |
-| `trackPerformanceJob` | Diário | Compara GSC antes/depois das otimizações aprovadas |
-| GA4 Sync | Diário | Coleta métricas reais de todos os 4 sites |
+As seguintes tabelas compõem a camada de persistência:
+- `gsc_performance` & `gsc_indexing_audit` — Dados operacionais do Search Console
+- `bi_daily_warehouse` — Snapshots diários históricos
+- `bi_smart_alerts` — Alertas de variações críticas enviados via Telegram
+- `bi_content_publications` — Histórico de otimizações e publicações
+- `bi_editorial_calendar` — Pauta mensal de conteúdo gerada pela Gemini AI
+- `bi_ab_tests` — Resultados estatísticos de testes A/B de títulos
+- `bi_cannibalization` — Relatório de conflitos de palavras-chave disputadas
+- `bi_schema_snippets` — Códigos JSON-LD e trechos para Posição 0
 
 ---
 
-## 🔔 Fluxo de Aprovação SEO
-
-```
-Cron Diário → GSC detecta oportunidade de CTR
-    → Gemini gera Title/Meta otimizados
-    → Telegram envia botão "✓ Aprovar / Ignorar"
-    → Você aprova → Site é reconstruído automaticamente
-    → 16 dias depois → Relatório Antes/Depois no WhatsApp
-```
-
----
-
-## 🗄️ Banco de Dados (Supabase)
-
-Principais tabelas (ver `supabase_schema.sql` para schema completo):
-
-| Tabela | Conteúdo |
-|--------|---------|
-| `gsc_performance` | Histórico diário de cliques, impressões, CTR, posição |
-| `ga4_metrics` | Usuários, sessões, bounce rate, fontes por site |
-| `seo_overrides` | Otimizações de metadata geradas pela IA |
-| `gsc_indexing_audit` | Auditoria de indexação de URLs |
-| `seo_scores` | Pontuação SEO técnica por página |
-| `gsc_sitemaps` | Registro de sitemaps por propriedade |
-
----
-
-## 🌐 Dashboard
-
-Abra `dashboard.html` no browser para acessar o painel com 13+ abas:
-- 🔥 Oportunidades de CTR
-- 📊 BI Premium (Executive Score, Forecast, Revenue, HeatMap)
-- 📈 Google Analytics 4 real
-- 🤖 Insights e Consultoria por IA
-- 🖥️ System Health & Observabilidade
+## 📄 Licença
+ISC License — Desenvolvido para automação contínua e escalável de Search Console & Business Intelligence.
