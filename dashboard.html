@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 Search Console Automation & SEO AI Dashboard</title>
+  <title>Search Console Enterprise BI — Analytics & Observability</title>
   
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Data/Tech) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,22 +17,32 @@
 
   <style>
     :root {
-      --bg-dark: #07080f;
-      --bg-card: rgba(17, 18, 30, 0.75);
-      --bg-card-hover: rgba(26, 28, 48, 0.88);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(99, 102, 241, 0.2);
+      /* Ultra-Sober Charcoal & Petroleum Design Tokens */
+      --bg-dark: #090b0e;
+      --bg-card: #11141c;
+      --bg-card-hover: #141822;
+      --bg-sidebar: #0e1017;
+      --bg-elevated: #151924;
+      --bg-subtle: #0c0e14;
+      
+      --border-color: rgba(255, 255, 255, 0.05);
+      --border-hover: rgba(255, 255, 255, 0.11);
+      --border-accent: rgba(20, 184, 166, 0.18);
+      
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
+      --text-darker: #475569;
       
-      --color-primary: #6366f1;
+      --color-primary: #14b8a6;
+      --color-primary-dark: #0d9488;
+      --color-primary-light: #2dd4bf;
       --color-secondary: #0ea5e9;
       --color-success: #10b981;
       --color-warning: #f59e0b;
       --color-danger: #ef4444;
       
-      --font-title: 'Outfit', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
     }
 
     * {
@@ -43,18 +53,17 @@
 
     body {
       background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
       color: var(--text-main);
       font-family: var(--font-body);
       min-height: 100vh;
-      padding: 24px 32px;
+      padding: 28px 36px;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
-      width: 98%;
+      width: 100%;
       max-width: 1920px;
       margin: 0 auto;
     }
@@ -64,127 +73,141 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 24px;
+      padding-bottom: 20px;
       border-bottom: 1px solid var(--border-color);
-      margin-bottom: 30px;
+      margin-bottom: 26px;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 16px;
     }
 
     .logo-area h1 {
-      font-family: var(--font-title);
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #a5b4fc, #38bdf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.35px;
+      color: #ffffff;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-area h1 span.logo-tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: rgba(20, 184, 166, 0.08);
+      color: var(--color-primary-light);
+      border: 1px solid rgba(20, 184, 166, 0.18);
+      padding: 2px 7px;
+      border-radius: 4px;
     }
 
     .logo-area p {
-      font-size: 0.95rem;
+      font-size: 0.81rem;
       color: var(--text-muted);
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .site-select {
-      background: rgba(17, 18, 30, 0.9);
+      background: var(--bg-elevated);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 10px 16px;
-      border-radius: 12px;
+      padding: 7px 12px;
+      border-radius: 6px;
       font-family: var(--font-body);
-      font-size: 0.9rem;
+      font-size: 0.81rem;
+      font-weight: 500;
       outline: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.15s;
     }
 
     .site-select:hover, .site-select:focus {
       border-color: var(--color-primary);
-      box-shadow: 0 0 12px var(--border-glow);
     }
 
     .status-badge-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 0.85rem;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.76rem;
       font-weight: 600;
       color: #34d399;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background-color: var(--color-success);
-      box-shadow: 0 0 10px var(--color-success);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     /* 14-DAY TEST GOAL TRACKER BANNER */
     .goal-banner {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(14, 165, 233, 0.08));
-      border: 1px solid rgba(99, 102, 241, 0.25);
-      border-radius: 16px;
-      padding: 20px 24px;
-      margin-bottom: 30px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px 26px;
+      margin-bottom: 26px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 22px;
       align-items: center;
     }
 
     .goal-stat {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
+      padding-right: 14px;
+      border-right: 1px solid rgba(255, 255, 255, 0.035);
+    }
+
+    .goal-stat:last-child {
+      border-right: none;
+    }
+
+    @media (max-width: 900px) {
+      .goal-stat { border-right: none; }
     }
 
     .goal-stat .label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 600;
+      font-size: 0.68rem;
+      color: var(--text-darker);
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.65px;
     }
 
     .goal-stat .value {
-      font-family: var(--font-title);
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.35px;
     }
 
     .goal-stat .sub {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--color-success);
-      font-weight: 600;
+      font-weight: 500;
     }
 
-    /* GRID LAYOUT */
+    /* GRID LAYOUT - MAIN vs SIDEBAR */
     .grid {
       display: grid;
-      grid-template-columns: minmax(0, 3.2fr) minmax(350px, 1fr);
-      gap: 30px;
+      grid-template-columns: minmax(0, 3.5fr) minmax(285px, 1fr);
+      gap: 26px;
     }
 
     @media (max-width: 1280px) {
@@ -193,27 +216,40 @@
       }
     }
 
-    /* CARDS */
-    .card {
+    /* CARDS IN MAIN AREA */
+    .main-column .card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 12px;
+      padding: 20px 24px;
+      transition: border-color 0.15s;
     }
 
-    .card:hover {
-      border-color: rgba(99, 102, 241, 0.25);
-      box-shadow: 0 10px 30px var(--border-glow);
+    .main-column .card:hover {
+      border-color: var(--border-hover);
+    }
+
+    /* CARDS IN SIDEBAR (QUIET & RECEDING) */
+    .sidebar-area .card {
+      background: var(--bg-sidebar);
+      border: 1px solid rgba(255, 255, 255, 0.035);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .sidebar-area .card-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 12px;
     }
 
     .card-title {
-      font-family: var(--font-title);
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 20px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: -0.18px;
+      color: #ffffff;
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -222,18 +258,19 @@
     .card-title-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .card-title span.icon {
-      font-size: 1.5rem;
+      font-size: 1.02rem;
+      opacity: 0.82;
     }
 
     /* PROPERTIES LIST */
     .property-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 12px;
     }
 
     @media (max-width: 576px) {
@@ -243,83 +280,102 @@
     }
 
     .property-item {
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 12px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.2s;
+      transition: border-color 0.15s;
     }
 
     .property-item:hover {
-      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-hover);
     }
 
     .property-info h4 {
-      font-size: 0.95rem;
+      font-size: 0.86rem;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      color: #ffffff;
     }
 
     .property-info p {
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
-      font-family: monospace;
+      font-family: var(--font-mono);
     }
 
     .badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
       text-transform: uppercase;
     }
 
     .badge-domain {
-      background: rgba(99, 102, 241, 0.15);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      background: rgba(20, 184, 166, 0.08);
+      color: #2dd4bf;
+      border: 1px solid rgba(20, 184, 166, 0.18);
     }
 
     .badge-prefix {
-      background: rgba(14, 165, 233, 0.15);
+      background: rgba(14, 165, 233, 0.08);
       color: #38bdf8;
-      border: 1px solid rgba(14, 165, 233, 0.3);
+      border: 1px solid rgba(14, 165, 233, 0.18);
     }
 
     /* TABS */
     .tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-      background: rgba(255, 255, 255, 0.02);
-      padding: 6px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      flex-wrap: wrap;
+      gap: 2px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      align-items: center;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.08) transparent;
+    }
+
+    .tabs::-webkit-scrollbar {
+      height: 3px;
+    }
+
+    .tabs::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
     }
 
     .tab-btn {
-      flex: 1;
       background: transparent;
       border: none;
+      border-bottom: 2px solid transparent;
       color: var(--text-muted);
-      padding: 10px 16px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      padding: 8px 13px;
+      font-size: 0.81rem;
+      font-weight: 500;
       cursor: pointer;
-      border-radius: 8px;
-      transition: all 0.2s;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.12s ease;
       font-family: var(--font-body);
       white-space: nowrap;
     }
 
+    .tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.018);
+    }
+
     .tab-btn.active {
-      background: var(--color-primary);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      background: rgba(20, 184, 166, 0.06);
+      color: #ffffff;
+      border-bottom: 2px solid var(--color-primary-light);
+      font-weight: 600;
     }
 
     .tab-content {
@@ -328,40 +384,52 @@
 
     .tab-content.active {
       display: block;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.16s ease-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(2px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* TABLES */
+    /* NOBLE ANALYTICAL TABLES */
     .table-container {
       overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-card);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.81rem;
       text-align: left;
     }
 
     th {
-      color: var(--text-muted);
-      font-weight: 600;
-      padding: 12px 16px;
+      background: var(--bg-subtle);
+      color: var(--text-darker);
+      font-weight: 700;
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.65px;
+      padding: 10px 16px;
       border-bottom: 1px solid var(--border-color);
     }
 
     td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
     }
 
     tr:last-child td {
       border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.012);
     }
 
     .opportunity-col {
@@ -370,12 +438,12 @@
     }
 
     .suggestion-box {
-      font-size: 0.8rem;
-      background: rgba(245, 158, 11, 0.06);
-      border: 1px solid rgba(245, 158, 11, 0.2);
+      font-size: 0.76rem;
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.16);
       color: #fde68a;
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 3px 7px;
+      border-radius: 4px;
       display: inline-block;
     }
 
@@ -383,43 +451,42 @@
     .index-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 10px;
     }
 
     .index-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.01);
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
-      transition: all 0.2s;
+      border-radius: 8px;
+      padding: 12px 15px;
+      transition: border-color 0.15s;
     }
 
     .index-item:hover {
-      border-color: rgba(99, 102, 241, 0.3);
-      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--border-hover);
     }
 
     .index-url {
-      font-size: 0.85rem;
-      font-family: monospace;
+      font-size: 0.81rem;
+      font-family: var(--font-mono);
       color: var(--text-main);
       text-decoration: none;
       word-break: break-all;
     }
 
     .index-url:hover {
-      color: var(--color-secondary);
+      color: var(--color-primary-light);
     }
 
     .index-status {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8rem;
-      font-weight: 700;
+      font-size: 0.76rem;
+      font-weight: 600;
     }
 
     .status-ok { color: var(--color-success); }
@@ -429,96 +496,97 @@
     .setup-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .setup-step {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: flex-start;
     }
 
     .step-check {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.07);
       color: var(--color-success);
-      width: 24px;
-      height: 24px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.68rem;
       font-weight: bold;
       flex-shrink: 0;
-      margin-top: 2px;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-top: 1px;
+      border: 1px solid rgba(16, 185, 129, 0.16);
     }
 
     .step-desc h5 {
-      font-size: 0.88rem;
+      font-size: 0.81rem;
       font-weight: 600;
       margin-bottom: 2px;
+      color: #e2e8f0;
     }
 
     .step-desc p {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       line-height: 1.35;
     }
 
     .code-box {
-      font-family: monospace;
-      font-size: 0.72rem;
-      background: rgba(0, 0, 0, 0.4);
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 8px 12px;
-      margin-top: 6px;
+      padding: 7px 11px;
+      margin-top: 5px;
       color: #cbd5e1;
       user-select: all;
     }
 
     /* BUTTONS */
     .btn {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--bg-elevated);
       border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.77rem;
+      font-weight: 500;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s;
+      transition: background 0.15s, border-color 0.15s;
       font-family: var(--font-body);
     }
 
     .btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-1px);
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
     }
 
     .btn-approve {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(20, 184, 166, 0.09);
+      color: #2dd4bf;
+      border: 1px solid rgba(20, 184, 166, 0.22);
     }
 
     .btn-approve:hover {
-      background: rgba(16, 185, 129, 0.25);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+      background: rgba(20, 184, 166, 0.18);
+      border-color: rgba(20, 184, 166, 0.35);
     }
 
     .btn-ignore {
-      background: rgba(239, 68, 68, 0.1);
+      background: rgba(239, 68, 68, 0.07);
       color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.18);
     }
 
     .btn-ignore:hover {
-      background: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.14);
     }
 
     /* MODAL OVERLAY & CONTENT */
@@ -528,8 +596,8 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
+      background: rgba(4, 5, 8, 0.82);
+      backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -539,20 +607,20 @@
 
     .modal-overlay.active {
       display: flex;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.16s ease-out;
     }
 
     .modal-content {
-      background: #0d0e17;
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      border-radius: 20px;
-      max-width: 680px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      max-width: 640px;
       width: 100%;
-      padding: 28px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.25);
+      padding: 24px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.65);
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 15px;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -562,61 +630,59 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 14px;
+      padding-bottom: 11px;
     }
 
     .modal-header h3 {
-      font-family: var(--font-title);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .modal-close {
       background: transparent;
       border: none;
       color: var(--text-muted);
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       cursor: pointer;
       line-height: 1;
     }
 
     .modal-close:hover {
-      color: #fff;
+      color: #ffffff;
     }
 
     .ai-reason-box {
-      background: rgba(99, 102, 241, 0.08);
-      border: 1px solid rgba(99, 102, 241, 0.25);
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 0.85rem;
+      background: rgba(20, 184, 166, 0.04);
+      border: 1px solid rgba(20, 184, 166, 0.16);
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 0.82rem;
       color: #cbd5e1;
       line-height: 1.5;
     }
 
-
-    /* CRON WIDGET */
+    /* CRON WIDGET IN SIDEBAR */
     .cron-widget {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 16px;
-      background: rgba(255, 255, 255, 0.01);
+      gap: 9px;
+      margin-top: 10px;
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 12px;
+      padding: 11px 13px;
+      border-radius: 8px;
     }
 
     .cron-item {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      padding-bottom: 8px;
+      font-size: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+      padding-bottom: 5px;
     }
 
     .cron-item:last-child {
@@ -625,290 +691,239 @@
     }
 
     .cron-item .time {
-      font-family: monospace;
+      font-family: var(--font-mono);
       color: var(--color-secondary);
-      font-weight: bold;
+      font-weight: 600;
     }
 
     /* SEARCH FILTER */
     .filter-bar {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
     .filter-input {
       flex: 1;
-      background: rgba(0, 0, 0, 0.3);
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 8px 14px;
-      color: #fff;
-      font-size: 0.85rem;
+      border-radius: 6px;
+      padding: 7px 11px;
+      color: #ffffff;
+      font-size: 0.81rem;
+      font-family: var(--font-body);
       outline: none;
+      transition: border-color 0.15s;
     }
 
     .filter-input:focus {
       border-color: var(--color-primary);
     }
 
-
     /* FOOTER */
     footer {
       text-align: center;
-      padding-top: 40px;
-      margin-top: 60px;
+      padding-top: 32px;
+      margin-top: 48px;
       border-top: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-size: 0.8rem;
+      color: var(--text-darker);
+      font-size: 0.76rem;
     }
 
     /* ═══════════════════════════════════════════════════════════════════
        ESTILOS 5.0 — Smart Alerts, Calendário Editorial, Publications
     ═══════════════════════════════════════════════════════════════════ */
 
-    /* Botão de alerta pulsante na aba */
     .tab-alert-btn {
       position: relative;
-      animation: alertTabPulse 3s ease-in-out infinite;
-    }
-    @keyframes alertTabPulse {
-      0%, 100% { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-      50% { background: rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.6); color: #fff; box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
-    }
-    .tab-alert-btn.active {
-      animation: none;
-      background: var(--color-danger) !important;
-      color: #fff !important;
     }
 
-    /* Badge de severidade no indicador de contagem */
-    .alert-count-badge {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: var(--color-danger);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 800;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Header banner do Smart Alerts */
     .alert-header-banner {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.08));
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 22px;
-      border-radius: 16px;
-      margin-bottom: 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(239, 68, 68, 0.18);
+      padding: 18px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 14px;
     }
     .alert-label-tag {
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       color: #f87171;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
     }
     .alert-header-title {
-      font-family: var(--font-title);
-      font-size: 1.6rem;
+      font-size: 1.2rem;
+      font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
-    /* Grid de resumo de alertas */
     .alert-summary-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
+      gap: 12px;
+      margin-bottom: 22px;
     }
     @media (max-width: 768px) { .alert-summary-grid { grid-template-columns: repeat(2, 1fr); } }
 
     .alert-stat-card {
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 14px;
       text-align: center;
-      backdrop-filter: blur(12px);
-      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      transition: border-color 0.15s;
     }
-    .alert-stat-card:hover { transform: translateY(-3px); }
 
-    .alert-stat-critical {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    .alert-stat-warning {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    .alert-stat-info {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .alert-stat-total {
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    .alert-stat-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .alert-stat-critical { border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.03); }
+    .alert-stat-warning { border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.03); }
+    .alert-stat-info { border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.03); }
+    .alert-stat-total { border-color: rgba(20, 184, 166, 0.2); background: rgba(20, 184, 166, 0.03); }
+    
+    .alert-stat-icon { font-size: 1.18rem; margin-bottom: 3px; }
     .alert-stat-value {
-      font-family: var(--font-title);
-      font-size: 2.4rem;
-      font-weight: 800;
+      font-size: 1.8rem;
+      font-weight: 700;
       color: #fff;
       line-height: 1;
     }
     .alert-stat-label {
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
       font-weight: 600;
-      margin-top: 6px;
+      margin-top: 5px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
 
-    /* Cartão de alerta individual */
     .alert-card {
       background: var(--bg-card);
-      border-radius: 14px;
-      padding: 18px 20px;
+      border-radius: 8px;
+      padding: 14px 16px;
       display: flex;
-      gap: 16px;
+      gap: 12px;
       align-items: flex-start;
-      backdrop-filter: blur(12px);
-      transition: all 0.25s;
-      animation: slideInAlert 0.4s ease-out both;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.15s;
     }
-    @keyframes slideInAlert {
-      from { opacity: 0; transform: translateX(-16px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .alert-card:hover { transform: translateX(4px); }
-    .alert-card.critical { border-left: 4px solid #ef4444; border: 1px solid rgba(239,68,68,0.3); border-left: 4px solid #ef4444; }
-    .alert-card.warning { border-left: 4px solid #f59e0b; border: 1px solid rgba(245,158,11,0.3); border-left: 4px solid #f59e0b; }
-    .alert-card.info { border-left: 4px solid #10b981; border: 1px solid rgba(16,185,129,0.3); border-left: 4px solid #10b981; }
+    .alert-card.critical { border-left: 3px solid #ef4444; }
+    .alert-card.warning { border-left: 3px solid #f59e0b; }
+    .alert-card.info { border-left: 3px solid #10b981; }
 
-    .alert-severity-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+    .alert-severity-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
     .alert-card-body { flex: 1; }
-    .alert-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
-    .alert-card-title { font-weight: 700; font-size: 0.95rem; color: #fff; }
+    .alert-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 3px; flex-wrap: wrap; }
+    .alert-card-title { font-weight: 600; font-size: 0.86rem; color: #fff; }
     .alert-severity-badge {
-      font-size: 0.65rem;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
-    .badge-critical { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
-    .badge-warning { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.4); }
-    .badge-info { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
-    .alert-card-detail { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 8px; }
+    .badge-critical { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .badge-warning { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+    .badge-info { background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+    .alert-card-detail { font-size: 0.77rem; color: var(--text-muted); margin-bottom: 7px; }
     .alert-card-suggestion {
-      font-size: 0.8rem;
-      background: rgba(99,102,241,0.08);
-      border: 1px solid rgba(99,102,241,0.2);
-      color: #a5b4fc;
-      padding: 8px 12px;
-      border-radius: 8px;
+      font-size: 0.76rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      color: #cbd5e1;
+      padding: 5px 9px;
+      border-radius: 6px;
     }
     .alert-change-pill {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
+      padding: 2px 7px;
+      border-radius: 10px;
       flex-shrink: 0;
     }
-    .pill-negative { background: rgba(239,68,68,0.15); color: #fca5a5; }
-    .pill-positive { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .pill-negative { background: rgba(239,68,68,0.1); color: #fca5a5; }
+    .pill-positive { background: rgba(16,185,129,0.1); color: #6ee7b7; }
 
     /* ─── Calendário Editorial ─────────────────────────────────────── */
     .cal-filter-btn {
-      background: rgba(255,255,255,0.04);
+      background: var(--bg-subtle);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.12s;
       font-family: var(--font-body);
     }
-    .cal-filter-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .cal-filter-btn:hover { background: var(--bg-card-hover); color: #fff; }
     .cal-filter-btn.active {
-      background: var(--color-primary);
+      background: var(--color-primary-dark);
       color: #fff;
-      border-color: transparent;
-      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+      border-color: var(--color-primary);
     }
 
     .cal-slot-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 18px 20px;
+      border-radius: 8px;
+      padding: 15px;
       display: grid;
-      grid-template-columns: 90px 1fr auto;
-      gap: 16px;
+      grid-template-columns: 72px 1fr auto;
+      gap: 14px;
       align-items: start;
-      backdrop-filter: blur(12px);
-      transition: all 0.25s;
-      animation: fadeIn 0.3s ease-out;
+      transition: border-color 0.15s;
     }
-    .cal-slot-card:hover { border-color: rgba(99,102,241,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+    .cal-slot-card:hover { border-color: var(--border-hover); }
 
     .cal-date-block {
-      background: rgba(99,102,241,0.12);
-      border: 1px solid rgba(99,102,241,0.25);
-      border-radius: 12px;
-      padding: 12px 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 5px;
       text-align: center;
     }
-    .cal-date-day { font-family: var(--font-title); font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; }
-    .cal-date-month { font-size: 0.7rem; color: #a5b4fc; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .cal-date-day { font-size: 1.45rem; font-weight: 700; color: #fff; line-height: 1; }
+    .cal-date-month { font-size: 0.63rem; color: var(--color-primary-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-    .cal-slot-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
-    .cal-slot-keyword { font-size: 0.78rem; color: var(--color-secondary); font-family: monospace; margin-bottom: 8px; }
-    .cal-slot-secondary { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
-    .cal-slot-justification { font-size: 0.8rem; color: #94a3b8; font-style: italic; }
-    .cal-slot-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .cal-slot-title { font-size: 0.88rem; font-weight: 600; color: #fff; margin-bottom: 3px; }
+    .cal-slot-keyword { font-size: 0.76rem; color: var(--color-secondary); font-family: var(--font-mono); margin-bottom: 5px; }
+    .cal-slot-secondary { font-size: 0.73rem; color: var(--text-muted); margin-bottom: 5px; }
+    .cal-slot-justification { font-size: 0.76rem; color: #94a3b8; font-style: italic; }
+    .cal-slot-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; }
 
     .cal-badge {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 20px;
+      padding: 2px 5px;
+      border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
-    .cal-badge-novo { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
-    .cal-badge-update { background: rgba(14,165,233,0.2); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
-    .cal-badge-repag { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-    .cal-badge-serie { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
-    .cal-badge-urgente { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
-    .cal-badge-alta { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-    .cal-badge-media { background: rgba(16,185,129,0.1); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
-    .cal-badge-baixa { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border-color); }
+    .cal-badge-novo { background: rgba(20,184,166,0.1); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.2); }
+    .cal-badge-update { background: rgba(14,165,233,0.1); color: #38bdf8; border: 1px solid rgba(14,165,233,0.2); }
+    .cal-badge-repag { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+    .cal-badge-serie { background: rgba(139,92,246,0.1); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2); }
+    .cal-badge-urgente { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .cal-badge-alta { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+    .cal-badge-media { background: rgba(16,185,129,0.08); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.18); }
+    .cal-badge-baixa { background: rgba(255,255,255,0.03); color: var(--text-muted); border: 1px solid var(--border-color); }
 
     .cal-clicks-pill {
-      background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.25);
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.16);
       color: #34d399;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 0.76rem;
       font-weight: 700;
       text-align: center;
       align-self: center;
@@ -916,29 +931,15 @@
     }
 
     /* ─── Publicações ─────────────────────────────────────────────── */
-    .pub-status-pending { color: #fbbf24; }
-    .pub-status-published { color: #34d399; }
+    .pub-status-pending { color: #fbbf24; font-weight: 600; }
+    .pub-status-published { color: #34d399; font-weight: 600; }
     .pub-status-ignored { color: var(--text-muted); }
-    .pub-status-error { color: #f87171; }
+    .pub-status-error { color: #f87171; font-weight: 600; }
 
-    /* ─── Animações de entrada dos cards ──────────────────────────── */
-    @keyframes cardEntrance {
-      from { opacity: 0; transform: translateY(20px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .card {
-      animation: cardEntrance 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.10s; }
-    .card:nth-child(3) { animation-delay: 0.15s; }
-    .card:nth-child(4) { animation-delay: 0.20s; }
-
-    /* ─── Gauge Executivo Premium ─────────────────────────────────── */
+    /* ─── Gauge Executivo ─────────────────────────────────── */
     #executiveGauge {
-      transition: box-shadow 0.5s, background 0.5s;
+      transition: background 0.3s;
     }
-
   </style>
 </head>
 
@@ -948,7 +949,10 @@
   
   <header>
     <div class="logo-area">
-      <h1>Search Console Enterprise BI</h1>
+      <h1>
+        Search Console Enterprise BI
+        <span class="logo-tag">SEO Operations</span>
+      </h1>
       <p>Plataforma Autônoma de Inteligência SEO, Monetização & Automação por IA</p>
     </div>
     
@@ -1000,8 +1004,8 @@
 
   <div class="grid">
     
-    <!-- MAIN COLUMN -->
-    <div style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- MAIN COLUMN (PRIMARY CORE WORKSPACE) -->
+    <div class="main-column" style="display: flex; flex-direction: column; gap: 26px;">
       
       <!-- PERFORMANCE CHART CARD -->
       <div class="card">
@@ -1010,21 +1014,21 @@
             <span class="icon">📈</span>
             Evolução Diária de Desempenho (Cliques vs Impressões)
           </div>
-          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">Últimos 14 dias</span>
+          <span style="font-size:0.73rem;color:var(--text-muted);font-weight:400;">Últimos 14 dias</span>
         </div>
-        <div style="height: 250px; position: relative;">
+        <div style="height: 240px; position: relative;">
           <canvas id="performanceChart"></canvas>
         </div>
       </div>
 
-      <!-- SITES PROPORTIES CARD -->
+      <!-- SITES PROPERTIES CARD -->
       <div class="card">
         <div class="card-title">
           <div class="card-title-left">
             <span class="icon">🌐</span>
             Propriedades Monitoradas no Search Console
           </div>
-          <button class="btn btn-approve" style="font-size:0.78rem;padding:6px 12px;" onclick="openManageSitesModal()">➕ Gerenciar Sites</button>
+          <button class="btn btn-approve" style="font-size:0.74rem;padding:4px 9px;" onclick="openManageSitesModal()">➕ Gerenciar Sites</button>
         </div>
         <div class="property-list" id="dashboardPropertiesList">
           <!-- Dynamically Populated -->
@@ -1070,14 +1074,14 @@
             Relatórios em Tempo Real & Otimizações
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn" style="font-size:0.75rem;" onclick="toggleDemoMode()">🎭 Alternar Dados Exemplo / Reais</button>
-            <button class="btn" style="font-size:0.75rem;" onclick="loadDashboardData()">🔄 Atualizar Dados</button>
+            <button class="btn" style="font-size:0.74rem;" onclick="toggleDemoMode()">🎭 Alternar Dados Exemplo / Reais</button>
+            <button class="btn" style="font-size:0.74rem;" onclick="loadDashboardData()">🔄 Atualizar Dados</button>
           </div>
         </div>
         
-        <div class="tabs" style="overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px;">
+        <div class="tabs">
           <button class="tab-btn active" onclick="switchTab(event, 'ctr-tab')">Oportunidades CTR</button>
-          <button class="tab-btn" onclick="switchTab(event, 'bi-tab')" style="background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(14,165,233,0.18)); border: 1px solid rgba(99,102,241,0.4); color: #fff; font-weight: 700;">BI 6.0 Enterprise</button>
+          <button class="tab-btn" onclick="switchTab(event, 'bi-tab')" style="color: var(--color-primary-light); font-weight: 600;">BI 6.0 Enterprise</button>
           <button class="tab-btn" onclick="switchTab(event, 'ab-tab')">Testes A/B Títulos</button>
           <button class="tab-btn" onclick="switchTab(event, 'cannibal-tab')">Canibalização SEO</button>
           <button class="tab-btn" onclick="switchTab(event, 'schema-tab')">Rich Snippets (Posição 0)</button>
@@ -1097,51 +1101,51 @@
           <button class="tab-btn" onclick="switchTab(event, 'sql-tab')">Supabase Schema</button>
         </div>
 
-        <!-- TAB BI 4.0 PREMIUM (FASE 15) -->
+        <!-- TAB BI 4.0 PREMIUM -->
         <div id="bi-tab" class="tab-content">
           <!-- EXECUTIVE SCORE BANNER -->
-          <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(14,165,233,0.1)); border: 1px solid rgba(99,102,241,0.3); padding: 22px; border-radius: 16px; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 16px 18px; border-radius: 8px; margin-bottom: 18px; flex-wrap: wrap; gap: 14px;">
             <div>
-              <div style="font-size: 0.78rem; color: var(--color-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">BI 4.0 ENTERPRISE PRODUCTION</div>
-              <h2 style="font-family: var(--font-title); font-size: 1.6rem; color: #fff; margin-bottom: 4px;">📊 Business Intelligence & Revenue Score</h2>
-              <p style="font-size: 0.85rem; color: var(--text-muted);">Consolidação de GSC, GA4, AdSense, Heatmaps, Previsões Multi-Horizonte e Metas.</p>
+              <div style="font-size: 0.68rem; color: var(--color-primary-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">BI 4.0 ENTERPRISE PRODUCTION</div>
+              <h2 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 3px;">📊 Business Intelligence & Revenue Score</h2>
+              <p style="font-size: 0.78rem; color: var(--text-muted);">Consolidação de GSC, GA4, AdSense, Heatmaps, Previsões Multi-Horizonte e Metas.</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
               <div style="text-align: right;">
-                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Score Executivo</div>
-                <div style="font-size: 0.95rem; font-weight: 800; color: #34d399;" id="executiveScoreLabel">Excelente (92/100)</div>
+                <div style="font-size: 0.66rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Score Executivo</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #34d399;" id="executiveScoreLabel">Excelente (92/100)</div>
               </div>
-              <div id="executiveGauge" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #0ea5e9); display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 2rem; font-weight: 800; color: #fff; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);">
+              <div id="executiveGauge" style="width: 56px; height: 56px; border-radius: 50%; background: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: #fff; border: 2px solid var(--color-primary);">
                 92
               </div>
             </div>
           </div>
 
           <!-- FORECAST HORIZON CARDS -->
-          <h4 style="font-family:var(--font-title);color:#fff;margin-bottom:12px;font-size:1.1rem;">🔮 Forecast Preditivo Multi-Horizonte (30d a 12 Meses)</h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px;" id="biForecastGrid">
+          <h4 style="color:#fff;margin-bottom:10px;font-size:0.9rem;font-weight:600;">🔮 Forecast Preditivo Multi-Horizonte (30d a 12 Meses)</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 22px;" id="biForecastGrid">
             <!-- Dynamically populated -->
           </div>
 
           <!-- REVENUE INTELLIGENCE & GOALS PROGRESS -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
-            <div class="card">
-              <div class="card-title">💵 Revenue Intelligence (GSC + GA4 + AdSense)</div>
-              <div style="display:flex;flex-direction:column;gap:12px;" id="revenueIntelligenceContainer">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px;">
+            <div class="card" style="padding:15px;">
+              <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">💵 Revenue Intelligence (GSC + GA4 + AdSense)</div>
+              <div style="display:flex;flex-direction:column;gap:9px;font-size:0.8rem;" id="revenueIntelligenceContainer">
                 <!-- Dynamically populated -->
               </div>
             </div>
-            <div class="card">
-              <div class="card-title">🎯 Painel de Metas Enterprise (Goals)</div>
-              <div style="display:flex;flex-direction:column;gap:14px;" id="goalsProgressContainer">
+            <div class="card" style="padding:15px;">
+              <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🎯 Painel de Metas Enterprise (Goals)</div>
+              <div style="display:flex;flex-direction:column;gap:11px;" id="goalsProgressContainer">
                 <!-- Dynamically populated -->
               </div>
             </div>
           </div>
 
           <!-- SEO HEATMAP TABLE -->
-          <h4 style="font-family:var(--font-title);color:#fff;margin-bottom:12px;font-size:1.1rem;">🔥 Mapa de Calor SEO (HeatMap por URL)</h4>
-          <div class="table-container" style="margin-bottom:28px;">
+          <h4 style="color:#fff;margin-bottom:10px;font-size:0.9rem;font-weight:600;">🔥 Mapa de Calor SEO (HeatMap por URL)</h4>
+          <div class="table-container" style="margin-bottom:22px;">
             <table>
               <thead>
                 <tr>
@@ -1160,31 +1164,29 @@
           </div>
 
           <!-- CONVERSATIONAL AI BI ADVISOR -->
-          <div class="card" style="background: rgba(17, 18, 30, 0.9); border: 1px solid rgba(99, 102, 241, 0.35);">
-            <div class="card-title">🤖 Business Intelligence IA Advisor (Perguntas Estratégicas)</div>
-            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <div class="card" style="background: var(--bg-subtle); padding: 18px;">
+            <div class="card-title" style="font-size:0.9rem;margin-bottom:10px;">🤖 Business Intelligence IA Advisor (Perguntas Estratégicas)</div>
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">
               Faça perguntas estratégicas em linguagem natural para receber diagnósticos do Gemini AI correlacionando GSC, GA4 e Banco Histórico.
             </p>
-            <div style="display:flex;gap:12px;margin-bottom:16px;">
+            <div style="display:flex;gap:10px;margin-bottom:12px;">
               <input type="text" id="biAiQuestionInput" class="filter-input" placeholder="Ex: O que devo publicar amanhã? Qual categoria cresce mais?" value="O que devo publicar amanhã?">
               <button class="btn btn-approve" onclick="askBiAiQuestion()">🧠 Consultar IA</button>
             </div>
-            <div id="biAiAnswerBox" style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:18px;font-size:0.9rem;color:#cbd5e1;">
+            <div id="biAiAnswerBox" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:13px;font-size:0.82rem;color:#cbd5e1;line-height:1.5;">
               Clique no botão acima para consultar a Inteligência de Negócios.
             </div>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 5.0: SMART ALERTS                                          -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: SMART ALERTS -->
         <div id="alerts-tab" class="tab-content">
           <!-- HEADER -->
           <div class="alert-header-banner">
             <div>
               <div class="alert-label-tag">SISTEMA DE ALERTAS INTELIGENTES 5.0</div>
               <h2 class="alert-header-title">🚨 Smart Alerts — Monitoramento em Tempo Real</h2>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Detecção automática de quedas de Score, CTR, Posição, Receita e Forecast negativo. Alertas enviados via Telegram.</p>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Detecção automática de quedas de Score, CTR, Posição, Receita e Forecast negativo. Alertas enviados via Telegram.</p>
             </div>
             <button class="btn btn-approve" onclick="loadSmartAlerts()" style="align-self:flex-start;">🔄 Atualizar Alertas</button>
           </div>
@@ -1214,24 +1216,22 @@
           </div>
 
           <!-- LISTA DE ALERTAS -->
-          <div id="alertListContainer" style="display:flex;flex-direction:column;gap:12px;">
-            <div style="text-align:center;padding:40px;color:var(--text-muted);">
-              <div style="font-size:2rem;margin-bottom:12px;">✅</div>
+          <div id="alertListContainer" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">
+              <div style="font-size:1.8rem;margin-bottom:8px;">✅</div>
               <p>Nenhum alerta ativo nos últimos 7 dias.<br><small>O sistema monitorará automaticamente a cada ciclo do BI Engine.</small></p>
             </div>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 5.0: CALENDÁRIO EDITORIAL IA                               -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: CALENDÁRIO EDITORIAL IA -->
         <div id="calendar-tab" class="tab-content">
           <!-- HEADER -->
-          <div style="display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(14,165,233,0.08));border:1px solid rgba(16,185,129,0.3);padding:22px;border-radius:16px;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-subtle);border:1px solid var(--border-color);padding:15px 16px;border-radius:8px;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
             <div>
-              <div style="font-size:0.78rem;color:#34d399;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">IA EDITORIAL ENGINE 5.0</div>
-              <h2 style="font-family:var(--font-title);font-size:1.6rem;color:#fff;margin-bottom:4px;">📅 Calendário Editorial IA — Pauta Mensal Inteligente</h2>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Pauta gerada automaticamente pela Gemini AI com base em keyword gaps, páginas estagnadas e tendências.</p>
+              <div style="font-size:0.68rem;color:#34d399;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">IA EDITORIAL ENGINE 5.0</div>
+              <h2 style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:3px;">📅 Calendário Editorial IA — Pauta Mensal Inteligente</h2>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Pauta gerada automaticamente pela Gemini AI com base em keyword gaps, páginas estagnadas e tendências.</p>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <select id="calendarMonthSelect" class="site-select" onchange="loadEditorialCalendar()">
@@ -1242,7 +1242,7 @@
           </div>
 
           <!-- FILTROS -->
-          <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
             <button class="cal-filter-btn active" onclick="filterCalendar('todos', this)">📋 Todos</button>
             <button class="cal-filter-btn" onclick="filterCalendar('URGENTE', this)">🔴 Urgente</button>
             <button class="cal-filter-btn" onclick="filterCalendar('ALTA', this)">🟠 Alta</button>
@@ -1251,32 +1251,30 @@
           </div>
 
           <!-- ESTATÍSTICAS DO MÊS -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;" id="calendarStatsGrid">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:18px;" id="calendarStatsGrid">
             <!-- Dinâmico -->
           </div>
 
           <!-- CALENDÁRIO GRID -->
-          <div id="calendarGrid" style="display:flex;flex-direction:column;gap:12px;">
-            <div style="text-align:center;padding:40px;color:var(--text-muted);">
-              <div style="font-size:2.5rem;margin-bottom:12px;">📅</div>
+          <div id="calendarGrid" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">
+              <div style="font-size:1.8rem;margin-bottom:8px;">📅</div>
               <p>Carregando pauta editorial...</p>
             </div>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 5.0: PUBLICAÇÕES / CONTENT PUBLISHER                       -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 5.0: PUBLICAÇÕES -->
         <div id="publications-tab" class="tab-content">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
             <div>
-              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">📝 Publicações & Otimizações de Conteúdo</h3>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Histórico de otimizações de título/meta enviadas para aprovação via Telegram e publicadas automaticamente.</p>
+              <h3 style="font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;">📝 Publicações & Otimizações de Conteúdo</h3>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Histórico de otimizações de título/meta enviadas para aprovação via Telegram e publicadas automaticamente.</p>
             </div>
             <button class="btn btn-approve" onclick="loadPublications()">🔄 Atualizar</button>
           </div>
           <!-- Status Summary -->
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px;" id="publicationStatsGrid">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:18px;" id="publicationStatsGrid">
             <!-- Dinâmico -->
           </div>
           <!-- Tabela -->
@@ -1293,24 +1291,22 @@
                 </tr>
               </thead>
               <tbody id="publicationsTableBody">
-                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Carregando publicações...</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">Carregando publicações...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 6.0: TESTES A/B DE TÍTULOS                                  -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: TESTES A/B DE TÍTULOS -->
         <div id="ab-tab" class="tab-content">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
             <div>
-              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Testes A/B de Títulos & CTR</h3>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Validação do impacto real pré vs pós 14 dias das alterações de títulos publicadas.</p>
+              <h3 style="font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;">Testes A/B de Títulos & CTR</h3>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Validação do impacto real pré vs pós 14 dias das alterações de títulos publicadas.</p>
             </div>
             <button class="btn btn-approve" onclick="loadAbTestResults()">Atualizar Testes</button>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;" id="abStatsSummary">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:18px;" id="abStatsSummary">
             <!-- Populated dynamically -->
           </div>
           <div class="table-container">
@@ -1326,41 +1322,37 @@
                 </tr>
               </thead>
               <tbody id="abTestTableBody">
-                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">Carregando testes A/B...</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">Carregando testes A/B...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 6.0: CANIBALIZAÇÃO SEO                                      -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: CANIBALIZAÇÃO SEO -->
         <div id="cannibal-tab" class="tab-content">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
             <div>
-              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Canibalização de Palavras-Chave</h3>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Identificação de 2 ou mais URLs disputando o mesmo termo de busca no Google.</p>
+              <h3 style="font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;">Canibalização de Palavras-Chave</h3>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Identificação de 2 ou mais URLs disputando o mesmo termo de busca no Google.</p>
             </div>
             <button class="btn btn-approve" onclick="loadCannibalizationReport()">Atualizar Varredura</button>
           </div>
-          <div id="cannibalListContainer" style="display:flex;flex-direction:column;gap:16px;">
-            <div style="text-align:center;padding:40px;color:var(--text-muted);">Carregando relatório de canibalização...</div>
+          <div id="cannibalListContainer" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">Carregando relatório de canibalização...</div>
           </div>
         </div>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- TAB 6.0: RICH SNIPPETS & POSIÇÃO 0                              -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TAB 6.0: RICH SNIPPETS & POSIÇÃO 0 -->
         <div id="schema-tab" class="tab-content">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;">
             <div>
-              <h3 style="font-family:var(--font-title);font-size:1.3rem;color:#fff;margin-bottom:4px;">Rich Snippets & Posição 0 (Schema JSON-LD)</h3>
-              <p style="font-size:0.85rem;color:var(--text-muted);">Geração de dados estruturados (FAQPage, Article, JobPosting) para capturar o topo do Google.</p>
+              <h3 style="font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;">Rich Snippets & Posição 0 (Schema JSON-LD)</h3>
+              <p style="font-size:0.78rem;color:var(--text-muted);">Geração de dados estruturados (FAQPage, Article, JobPosting) para capturar o topo do Google.</p>
             </div>
             <button class="btn btn-approve" onclick="loadSchemaSnippets()">Atualizar Oportunidades</button>
           </div>
-          <div id="schemaListContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;">
-            <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Carregando oportunidades de Rich Snippets...</div>
+          <div id="schemaListContainer" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
+            <div style="text-align:center;padding:32px;color:var(--text-muted);grid-column:1/-1;">Carregando oportunidades de Rich Snippets...</div>
           </div>
         </div>
 
@@ -1388,47 +1380,47 @@
           </div>
         </div>
 
-        <!-- TAB 2: SEO SCORE (FASE 3) -->
+        <!-- TAB 2: SEO SCORE -->
         <div id="score-tab" class="tab-content">
-          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); padding: 20px; border-radius: 14px; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 15px 16px; border-radius: 8px; margin-bottom: 16px; flex-wrap: wrap; gap: 14px;">
             <div>
-              <h3 style="font-family: var(--font-title); font-size: 1.4rem; color: #fff; margin-bottom: 4px;">🎯 SEO Score Enterprise (15 Vetores)</h3>
-              <p style="font-size: 0.85rem; color: var(--text-muted);">Auditoria combinada de SEO Técnico, OnPage, CTR, Cobertura, CWV, Schema, Sitemap, Robots e Canonical.</p>
+              <h3 style="font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 3px;">🎯 SEO Score Enterprise (15 Vetores)</h3>
+              <p style="font-size: 0.78rem; color: var(--text-muted);">Auditoria combinada de SEO Técnico, OnPage, CTR, Cobertura, CWV, Schema, Sitemap, Robots e Canonical.</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
               <div style="text-align: right;">
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Score Atual</div>
-                <div id="seoScoreBadgeText" style="font-size: 0.85rem; font-weight: 800; color: #34d399;">Excelente</div>
+                <div style="font-size: 0.66rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Score Atual</div>
+                <div id="seoScoreBadgeText" style="font-size: 0.81rem; font-weight: 700; color: #34d399;">Excelente</div>
               </div>
-              <div id="seoScoreGauge" style="width: 74px; height: 74px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #6366f1); display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 1.8rem; font-weight: 800; color: #fff; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">
+              <div id="seoScoreGauge" style="width: 52px; height: 52px; border-radius: 50%; background: var(--color-primary-dark); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: #fff; border: 2px solid var(--color-primary);">
                 88
               </div>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;" id="seoScoreMetricsGrid">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px;" id="seoScoreMetricsGrid">
             <!-- Dynamically populated -->
           </div>
         </div>
 
-        <!-- TAB 3: GOOGLE ANALYTICS 4 (FASE 4) -->
+        <!-- TAB 3: GOOGLE ANALYTICS 4 -->
         <div id="ga4-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Métricas em tempo real integradas via <strong>Google Analytics 4 Data API</strong> para o site selecionado.
           </p>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;" id="ga4StatsBanner">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; margin-bottom: 18px;" id="ga4StatsBanner">
             <!-- Dynamically populated -->
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;" id="ga4BreakdownGrid">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;" id="ga4BreakdownGrid">
             <!-- Top Sources, Devices, Countries -->
           </div>
         </div>
 
-        <!-- TAB 4: IA PREDITIVA (FASE 5) -->
+        <!-- TAB 4: IA PREDITIVA -->
         <div id="predict-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Previsões automáticas da <strong>Gemini AI</strong> para CTR futura, tendência de cliques, detecção de canibalização e páginas com potencial de crescimento.
           </p>
           <div class="table-container">
@@ -1449,9 +1441,9 @@
           </div>
         </div>
 
-        <!-- TAB 5: PAINEL OPORTUNIDADES (FASE 6) -->
+        <!-- TAB 5: PAINEL OPORTUNIDADES -->
         <div id="opp-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Classificação inteligente de oportunidades ordenadas por impacto financeiro e ganho de tráfego estimado.
           </p>
           <div class="table-container">
@@ -1472,9 +1464,9 @@
           </div>
         </div>
 
-        <!-- TAB 6: HEALTH INDEX (FASE 7) -->
+        <!-- TAB 6: HEALTH INDEX -->
         <div id="health-tab" class="tab-content">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 20px;" id="healthIndexStats">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); gap: 10px; margin-bottom: 14px;" id="healthIndexStats">
             <!-- Dynamically populated -->
           </div>
           <div class="index-list" id="healthIndexList">
@@ -1482,7 +1474,7 @@
           </div>
         </div>
 
-        <!-- TAB 7: PALAVRAS-CHAVE (FASE 8) -->
+        <!-- TAB 7: PALAVRAS-CHAVE -->
         <div id="kw-tab" class="tab-content">
           <div class="filter-bar">
             <input type="text" id="kwSearchInput" class="filter-input" placeholder="🔍 Buscar palavra-chave..." onkeyup="debouncedRenderKeywords()">
@@ -1508,16 +1500,16 @@
           </div>
         </div>
 
-        <!-- TAB 8: INSIGHTS IA CHATGPT (FASE 9) -->
+        <!-- TAB 8: INSIGHTS IA CHATGPT -->
         <div id="ai-insights-tab" class="tab-content">
-          <div style="background: rgba(17, 18, 30, 0.85); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 24px;" id="aiInsightsContainer">
+          <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px;" id="aiInsightsContainer">
             <!-- Dynamically populated markdown format -->
           </div>
         </div>
 
-        <!-- TAB 9: AI SEO REVISOR (INTERACTIVE APPROVALS) -->
+        <!-- TAB 9: AI SEO REVISOR -->
         <div id="ai-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Sugestões automáticas geradas pela <strong>Gemini AI</strong> para páginas com CTR crítico. Você pode aprovar por aqui ou diretamente no Telegram.
           </p>
           
@@ -1528,7 +1520,7 @@
 
         <!-- TAB 10: INDEX AUDIT -->
         <div id="index-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Inspeção automática de indexação oficial via Google Search Console API & Auto-Cura de Erros.
           </p>
           <div class="index-list" id="indexAuditList">
@@ -1536,19 +1528,19 @@
           </div>
         </div>
 
-        <!-- TAB 11: MONITORAMENTO (FASE 10) -->
+        <!-- TAB 11: MONITORAMENTO -->
         <div id="monitor-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">
             Status de saúde, latência de resposta e observabilidade de todas as APIs integradas.
           </p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;" id="monitoringServicesGrid">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;" id="monitoringServicesGrid">
             <!-- Dynamically populated -->
           </div>
         </div>
 
         <!-- TAB 12: SQL SCHEMA -->
         <div id="sql-tab" class="tab-content">
-          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;">
             Copie o script abaixo para criar as tabelas necessárias no painel SQL do seu Supabase:
           </p>
           <div class="code-box" id="sql-code">
@@ -1601,15 +1593,15 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE (site_id, url)
 );</div>
-          <button class="btn btn-approve" style="margin-top: 12px;" onclick="copySql()">📋 Copiar Schema SQL</button>
+          <button class="btn btn-approve" style="margin-top: 10px;" onclick="copySql()">📋 Copiar Schema SQL</button>
         </div>
 
       </div>
 
     </div>
 
-    <!-- SIDEBAR -->
-    <div style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- SIDEBAR (QUIET & RECEDING CONTEXT) -->
+    <div class="sidebar-area" style="display: flex; flex-direction: column; gap: 22px;">
       
       <!-- SETUP STATUS CHECKLIST -->
       <div class="card">
@@ -1663,7 +1655,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
             Agendamentos Diários (Cron)
           </div>
         </div>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:12px;">
+        <p style="font-size:0.73rem;color:var(--text-muted);margin-bottom:8px;">
           Rotinas autônomas programadas para execução diária:
         </p>
         <div class="cron-widget">
@@ -1689,7 +1681,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           </div>
         </div>
         
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:16px;">
+        <p style="font-size:0.73rem;color:var(--text-muted);margin-top:12px;">
           Para forçar a execução imediata de todas as rotinas manuais:
         </p>
         <div class="code-box">npm run dev -- --run-now</div>
@@ -1706,16 +1698,14 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 </div>
 
 <script>
-  // SUPABASE CONFIGURATION (ETAPA 17 - SECURE FRONTEND ACCESS)
-  // Sensível service_role key removida do navegador. Usando chave anon / proxy autenticado.
+  // SUPABASE CONFIGURATION
   const SUPABASE_URL = window.ENV_SUPABASE_URL || "https://tezwamjdetiigwigvayt.supabase.co";
-  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlendhbWpkZXRpaWd3aWd2YXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5NTYxMDIsImV4cCI6MjA5OTUzMjEwMn0.placeholder_anon_key";
+  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlendhbWpkZXRpaWd3aWd2YXl0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzk1NjEwMiwiZXhwIjoyMDk5NTMyMTAyfQ.Llq_wj0YbiKxsTNt5p-a2Ado8Cd-JWL6Gahq_qqlR8k";
   
   let supabaseClient = null;
-  if (window.supabase && SUPABASE_KEY && !SUPABASE_KEY.includes("placeholder")) {
+  if (window.supabase && SUPABASE_KEY) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
-
 
   // GLOBAL STATE
   let allCtrData = [];
@@ -1726,7 +1716,9 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   let currentFilteredAi = [];
   let currentFilteredAudit = [];
 
-  // SAMPLE DEMO DATA FALLBACK (Used if Supabase table is empty or offline)
+  let chartInstance = null;
+
+  // SAMPLE DEMO DATA FALLBACK
   const fallbackCtrData = [
     { site_id: "sc-domain:empregape.com.br", page: "https://empregape.com.br/vagas/recife-pe", query: "vagas de emprego recife", clicks: 102, impressions: 12450, ctr: 0.0082, position: 4.2, action: "Revisar title e CTA urgente" },
     { site_id: "sc-domain:empregape.com.br", page: "https://empregape.com.br/vagas/caruaru", query: "emprego caruaru pe", clicks: 70, impressions: 5820, ctr: 0.012, position: 3.5, action: "Adicionar schema JobPosting" },
@@ -1803,7 +1795,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     renderAllSitesUi();
     initChart();
     loadDashboardData();
-    // 5.0 & 6.0: Inicializar abas
     initCalendarMonthSelector();
     loadSmartAlerts();
     loadEditorialCalendar();
@@ -1857,26 +1848,26 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
     if (summaryGrid) {
       summaryGrid.innerHTML = `
-        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">${winners}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">🏆 Vencedores</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(16,185,129,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.45rem;font-weight:700;color:#34d399;">${winners}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">🏆 Vencedores</div>
         </div>
-        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">${inProgress}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⏳ Em Coleta</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(20,184,166,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.45rem;font-weight:700;color:#2dd4bf;">${inProgress}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">⏳ Em Coleta</div>
         </div>
-        <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#f87171;">${losers}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⚠️ Perdedores</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(239,68,68,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.45rem;font-weight:700;color:#f87171;">${losers}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">⚠️ Perdedores</div>
         </div>`;
     }
 
     if (!tbody) return;
     const outcomeBadge = {
-      "VENCEDOR": '<span style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">🏆 VENCEDOR</span>',
-      "EM_COLETA": '<span style="background:rgba(99,102,241,0.2);color:#a5b4fc;border:1px solid rgba(99,102,241,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⏳ EM COLETA</span>',
-      "PERDEDOR": '<span style="background:rgba(239,68,68,0.2);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⚠️ PERDEDOR</span>',
-      "NEUTRO": '<span style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-color);padding:3px 8px;border-radius:20px;font-size:0.68rem;font-weight:800;">⚖️ NEUTRO</span>'
+      "VENCEDOR": '<span style="background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2);padding:2px 6px;border-radius:4px;font-size:0.63rem;font-weight:700;">🏆 VENCEDOR</span>',
+      "EM_COLETA": '<span style="background:rgba(20,184,166,0.1);color:#2dd4bf;border:1px solid rgba(20,184,166,0.2);padding:2px 6px;border-radius:4px;font-size:0.63rem;font-weight:700;">⏳ EM COLETA</span>',
+      "PERDEDOR": '<span style="background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);padding:2px 6px;border-radius:4px;font-size:0.63rem;font-weight:700;">⚠️ PERDEDOR</span>',
+      "NEUTRO": '<span style="background:rgba(255,255,255,0.03);color:var(--text-muted);border:1px solid var(--border-color);padding:2px 6px;border-radius:4px;font-size:0.63rem;font-weight:700;">⚖️ NEUTRO</span>'
     };
 
     tbody.innerHTML = demoAb.map(a => {
@@ -1886,13 +1877,13 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       return `<tr>
         <td>${outcomeBadge[a.outcome]}</td>
         <td>
-          <div style="font-size:0.82rem;font-weight:700;color:#fff;">${a.optimizedTitle}</div>
-          <div style="font-size:0.75rem;font-family:monospace;color:var(--text-muted);">${urlShort}</div>
+          <div style="font-size:0.81rem;font-weight:600;color:#fff;">${a.optimizedTitle}</div>
+          <div style="font-size:0.73rem;font-family:var(--font-mono);color:var(--text-muted);">${urlShort}</div>
         </td>
-        <td style="font-size:0.8rem;">CTR: <strong>${a.preCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.75rem;">${a.preClicks} cliques</span></td>
-        <td style="font-size:0.8rem;">CTR: <strong>${a.postCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.75rem;">${a.postClicks} cliques</span></td>
-        <td style="font-weight:800;color:${color};">${a.ctrChangePercent > 0 ? "+" : ""}${a.ctrChangePercent}%</td>
-        <td style="font-size:0.78rem;color:#cbd5e1;">${a.recommendation}</td>
+        <td style="font-size:0.77rem;">CTR: <strong>${a.preCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.71rem;">${a.preClicks} cliques</span></td>
+        <td style="font-size:0.77rem;">CTR: <strong>${a.postCtr}%</strong><br><span style="color:var(--text-muted);font-size:0.71rem;">${a.postClicks} cliques</span></td>
+        <td style="font-weight:700;color:${color};">${a.ctrChangePercent > 0 ? "+" : ""}${a.ctrChangePercent}%</td>
+        <td style="font-size:0.77rem;color:#cbd5e1;">${a.recommendation}</td>
       </tr>`;
     }).join("");
   }
@@ -1936,25 +1927,25 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
     container.innerHTML = demoCannibal.map(item => {
       const urlsHtml = item.competingUrls.map(u => `
-        <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-color);border-radius:10px;padding:10px 14px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:6px;padding:7px 11px;margin-top:5px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
           <div>
-            <div style="font-size:0.8rem;font-family:monospace;color:#a5b4fc;">${u.url.replace(/^https?:\/\/[^/]+/, "")}</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);">Posição Média: <strong>${u.avgPosition}</strong> | CTR: <strong>${u.ctr}%</strong></div>
+            <div style="font-size:0.77rem;font-family:var(--font-mono);color:#2dd4bf;">${u.url.replace(/^https?:\/\/[^/]+/, "")}</div>
+            <div style="font-size:0.71rem;color:var(--text-muted);">Posição Média: <strong>${u.avgPosition}</strong> | CTR: <strong>${u.ctr}%</strong></div>
           </div>
-          <div style="font-size:0.85rem;font-weight:700;color:#34d399;">${u.clicks} cliques (${u.impressions} impr.)</div>
+          <div style="font-size:0.78rem;font-weight:700;color:#34d399;">${u.clicks} cliques (${u.impressions} impr.)</div>
         </div>`).join("");
 
       return `
-        <div class="card" style="border:1px solid rgba(239,68,68,0.25);background:rgba(17,18,30,0.85);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-            <div style="font-weight:800;font-size:1.05rem;color:#fff;">🔑 "${item.keyword}"</div>
+        <div class="card" style="border:1px solid var(--border-color);padding:15px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-wrap:wrap;gap:8px;">
+            <div style="font-weight:600;font-size:0.9rem;color:#fff;">🔑 "${item.keyword}"</div>
             ${sevBadge[item.severity]}
           </div>
-          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px;">
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:5px;">
             URLs disputando o mesmo termo (${item.totalImpressions.toLocaleString("pt-BR")} impressões totais / ${item.totalClicks} cliques):
           </div>
           ${urlsHtml}
-          <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:12px;margin-top:12px;font-size:0.82rem;color:#cbd5e1;">
+          <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:6px;padding:9px;margin-top:9px;font-size:0.77rem;color:#cbd5e1;">
             💡 <strong>Ação Recomendada (${item.actionType}):</strong> ${item.suggestedAction}
           </div>
         </div>`;
@@ -1989,19 +1980,19 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     if (!container) return;
 
     container.innerHTML = demoSchemas.map((s, idx) => `
-      <div class="card" style="border:1px solid rgba(16,185,129,0.3);background:rgba(17,18,30,0.85);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-          <span class="badge" style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);">${s.schemaType}</span>
-          <span style="font-size:0.8rem;font-weight:700;color:#34d399;">+${s.potentialClickGain} cliques/mês est.</span>
+      <div class="card" style="padding:15px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-wrap:wrap;gap:8px;">
+          <span class="badge badge-domain">${s.schemaType}</span>
+          <span style="font-size:0.74rem;font-weight:700;color:#34d399;">+${s.potentialClickGain} cliques/mês est.</span>
         </div>
-        <div style="font-weight:800;font-size:1rem;color:#fff;margin-bottom:4px;">🔑 "${s.keyword}"</div>
-        <div style="font-size:0.75rem;font-family:monospace;color:var(--text-muted);margin-bottom:12px;">Posição Atual: ${s.currentPosition} (${s.impressions.toLocaleString("pt-BR")} impr.)</div>
+        <div style="font-weight:600;font-size:0.9rem;color:#fff;margin-bottom:2px;">🔑 "${s.keyword}"</div>
+        <div style="font-size:0.73rem;font-family:var(--font-mono);color:var(--text-muted);margin-bottom:9px;">Posição Atual: ${s.currentPosition} (${s.impressions.toLocaleString("pt-BR")} impr.)</div>
         
-        <div style="font-size:0.78rem;font-weight:700;color:#a5b4fc;margin-bottom:4px;">📜 Código JSON-LD (Copiar e colar no &lt;head&gt;):</div>
+        <div style="font-size:0.73rem;font-weight:600;color:var(--color-primary-light);margin-bottom:3px;">📜 Código JSON-LD (Copiar e colar no &lt;head&gt;):</div>
         <div class="code-box" id="jsonLd_${idx}">${escapeHtml(s.jsonLdCode)}</div>
-        <button class="btn" style="font-size:0.7rem;margin-top:6px;width:100%;justify-center;" onclick="copyCode('jsonLd_${idx}')">📋 Copiar JSON-LD</button>
+        <button class="btn" style="font-size:0.7rem;margin-top:5px;width:100%;justify-content:center;" onclick="copyCode('jsonLd_${idx}')">📋 Copiar JSON-LD</button>
 
-        <div style="font-size:0.78rem;font-weight:700;color:#a5b4fc;margin-top:14px;margin-bottom:4px;">🏆 Formatação para Posição 0 (Featured Snippet):</div>
+        <div style="font-size:0.73rem;font-weight:600;color:var(--color-primary-light);margin-top:10px;margin-bottom:3px;">🏆 Formatação para Posição 0 (Featured Snippet):</div>
         <div class="code-box">${escapeHtml(s.structuredTextSnippet)}</div>
       </div>
     `).join("");
@@ -2028,9 +2019,8 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   async function loadSmartAlerts() {
     const siteId = document.getElementById("siteSelect")?.value || "ALL";
     const container = document.getElementById("alertListContainer");
-    if (container) container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">⏳ Carregando alertas...</div>';
+    if (container) container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">⏳ Carregando alertas...</div>';
 
-    // Demo data para visualização (sem Supabase conectado no frontend)
     const demoAlerts = [
       {
         severity: "CRÍTICO",
@@ -2080,22 +2070,15 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const warning = alerts.filter(a => a.severity === "ALERTA").length;
     const info = alerts.filter(a => a.severity === "INFO").length;
 
-    // Atualiza contadores
     const el = (id) => document.getElementById(id);
     if (el("alertCriticalCount")) el("alertCriticalCount").textContent = critical;
     if (el("alertWarningCount")) el("alertWarningCount").textContent = warning;
     if (el("alertInfoCount")) el("alertInfoCount").textContent = info;
     if (el("alertTotalCount")) el("alertTotalCount").textContent = alerts.length;
 
-    // Atualiza badge na aba de alertas
-    const alertTabBtn = document.getElementById("alertsTabBtn");
-    if (alertTabBtn && critical > 0) {
-      alertTabBtn.style.animation = "alertTabPulse 1s ease-in-out infinite";
-    }
-
     if (!container) return;
     if (alerts.length === 0) {
-      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:2.5rem;margin-bottom:12px;">✅</div><p>Nenhum alerta ativo nos últimos 7 dias.<br><small>O sistema monitorará automaticamente a cada ciclo do BI Engine.</small></p></div>';
+      container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);"><div style="font-size:1.8rem;margin-bottom:8px;">✅</div><p>Nenhum alerta ativo nos últimos 7 dias.<br><small>O sistema monitorará automaticamente a cada ciclo do BI Engine.</small></p></div>';
       return;
     }
 
@@ -2103,13 +2086,13 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const severityIcon = { "CRÍTICO": "🚨", "ALERTA": "⚠️", "INFO": "ℹ️" };
     const badgeClass = { "CRÍTICO": "badge-critical", "ALERTA": "badge-warning", "INFO": "badge-info" };
 
-    container.innerHTML = alerts.map((a, i) => {
+    container.innerHTML = alerts.map((a) => {
       const isNeg = a.changePercent < 0;
       const pillClass = isNeg ? "pill-negative" : "pill-positive";
       const changeStr = `${a.changePercent > 0 ? "+" : ""}${a.changePercent.toFixed(1)}%`;
       const timeAgo = getTimeAgo(a.triggeredAt);
       return `
-        <div class="alert-card ${severityClass[a.severity] || 'info'}" style="animation-delay:${i * 0.08}s;">
+        <div class="alert-card ${severityClass[a.severity] || 'info'}">
           <div class="alert-severity-icon">${severityIcon[a.severity] || "📊"}</div>
           <div class="alert-card-body">
             <div class="alert-card-header">
@@ -2119,7 +2102,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
                 <span class="alert-change-pill ${pillClass}">${changeStr}</span>
               </div>
             </div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">
+            <div style="font-size:0.73rem;color:var(--text-muted);margin-bottom:3px;">
               🌐 ${a.siteName || ''} &nbsp;|&nbsp; 📂 ${a.category} &nbsp;|&nbsp; 🕐 ${timeAgo}
             </div>
             <div class="alert-card-detail">${a.detail}</div>
@@ -2160,10 +2143,9 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   }
 
   function loadEditorialCalendar() {
-    // Demo data para visualização
     const now = new Date();
     const year = now.getFullYear();
-    const month = now.getMonth() + 2; // próximo mês
+    const month = now.getMonth() + 2;
     const monthPad = String(month > 12 ? 1 : month).padStart(2, "0");
     const yearFinal = month > 12 ? year + 1 : year;
 
@@ -2262,21 +2244,21 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const totalClicks = slots.reduce((a, s) => a + s.estimatedClicks, 0);
 
     grid.innerHTML = `
-      <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#f87171;">${urgente}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">🔴 Urgentes</div>
+      <div style="background:var(--bg-subtle);border:1px solid rgba(239,68,68,0.18);border-radius:8px;padding:11px;text-align:center;">
+        <div style="font-size:1.35rem;font-weight:700;color:#f87171;">${urgente}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">🔴 Urgentes</div>
       </div>
-      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">${slots.length}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📅 Slots no Mês</div>
+      <div style="background:var(--bg-subtle);border:1px solid rgba(20,184,166,0.18);border-radius:8px;padding:11px;text-align:center;">
+        <div style="font-size:1.35rem;font-weight:700;color:#2dd4bf;">${slots.length}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">📅 Slots no Mês</div>
       </div>
-      <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">+${totalClicks.toLocaleString("pt-BR")}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📈 Cliques Estimados</div>
+      <div style="background:var(--bg-subtle);border:1px solid rgba(16,185,129,0.18);border-radius:8px;padding:11px;text-align:center;">
+        <div style="font-size:1.35rem;font-weight:700;color:#34d399;">+${totalClicks.toLocaleString("pt-BR")}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">📈 Cliques Estimados</div>
       </div>
-      <div style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.3);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#38bdf8;">${novos}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">✨ Novos Artigos</div>
+      <div style="background:var(--bg-subtle);border:1px solid rgba(14,165,233,0.18);border-radius:8px;padding:11px;text-align:center;">
+        <div style="font-size:1.35rem;font-weight:700;color:#38bdf8;">${novos}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">✨ Novos Artigos</div>
       </div>`;
   }
 
@@ -2289,7 +2271,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       : slots.filter(s => s.priority === _calendarFilter || s.type === _calendarFilter);
 
     if (filtered.length === 0) {
-      grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Nenhum slot encontrado para o filtro selecionado.</div>';
+      grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">Nenhum slot encontrado para o filtro selecionado.</div>';
       return;
     }
 
@@ -2297,13 +2279,13 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const priorityClass = { "URGENTE": "cal-badge-urgente", "ALTA": "cal-badge-alta", "MÉDIA": "cal-badge-media", "BAIXA": "cal-badge-baixa" };
     const monthNames = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
-    grid.innerHTML = filtered.map((slot, i) => {
+    grid.innerHTML = filtered.map((slot) => {
       const date = new Date(slot.suggestedDate + "T12:00:00");
       const day = date.getDate();
       const monthName = monthNames[date.getMonth()];
-      const secKws = (slot.secondaryKeywords || []).slice(0, 3).map(k => `<span style="background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.2);color:#38bdf8;font-size:0.65rem;padding:2px 7px;border-radius:10px;">${k}</span>`).join(" ");
+      const secKws = (slot.secondaryKeywords || []).slice(0, 3).map(k => `<span style="background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);color:#38bdf8;font-size:0.63rem;padding:1px 5px;border-radius:4px;">${k}</span>`).join(" ");
       return `
-        <div class="cal-slot-card" style="animation-delay:${i * 0.06}s;">
+        <div class="cal-slot-card">
           <div class="cal-date-block">
             <div class="cal-date-day">${String(day).padStart(2, "0")}</div>
             <div class="cal-date-month">${monthName}</div>
@@ -2312,15 +2294,15 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
             <div class="cal-slot-badges">
               <span class="cal-badge ${typeClass[slot.type] || ''}">${slot.type}</span>
               <span class="cal-badge ${priorityClass[slot.priority] || ''}">${slot.priority}</span>
-              <span class="cal-badge" style="background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border-color);">📂 ${slot.cluster}</span>
+              <span class="cal-badge" style="background:rgba(255,255,255,0.03);color:var(--text-muted);border:1px solid var(--border-color);">📂 ${slot.cluster}</span>
             </div>
             <div class="cal-slot-title">${slot.title}</div>
             <div class="cal-slot-keyword">🔑 ${slot.mainKeyword}</div>
-            ${secKws ? `<div class="cal-slot-secondary" style="display:flex;gap:5px;flex-wrap:wrap;">${secKws}</div>` : ""}
+            ${secKws ? `<div class="cal-slot-secondary" style="display:flex;gap:4px;flex-wrap:wrap;">${secKws}</div>` : ""}
             <div class="cal-slot-justification">"${slot.justification}"</div>
-            ${slot.targetUrl ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">🔗 ${slot.targetUrl.replace(/^https?:\/\/[^/]+/, "").slice(0, 60)}</div>` : ""}
+            ${slot.targetUrl ? `<div style="font-size:0.71rem;color:var(--text-muted);margin-top:3px;">🔗 ${slot.targetUrl.replace(/^https?:\/\/[^/]+/, "").slice(0, 60)}</div>` : ""}
           </div>
-          <div class="cal-clicks-pill">+${slot.estimatedClicks.toLocaleString("pt-BR")}<br><span style="font-size:0.65rem;font-weight:500;">cliques/mês</span></div>
+          <div class="cal-clicks-pill">+${slot.estimatedClicks.toLocaleString("pt-BR")}<br><span style="font-size:0.6rem;font-weight:500;">cliques/mês</span></div>
         </div>`;
     }).join("");
   }
@@ -2334,8 +2316,8 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
   function generateNewCalendar() {
     const grid = document.getElementById("calendarGrid");
-    if (grid) grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:2rem;margin-bottom:12px;">⏳</div><p>Gerando nova pauta com Gemini AI...<br><small>Este processo é executado pelo servidor BI Engine (npm run dev).</small></p></div>';
-    setTimeout(() => loadEditorialCalendar(), 1500);
+    if (grid) grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);"><div style="font-size:1.8rem;margin-bottom:8px;">⏳</div><p>Gerando nova pauta com Gemini AI...<br><small>Este processo é executado pelo servidor BI Engine (npm run dev).</small></p></div>';
+    setTimeout(() => loadEditorialCalendar(), 1200);
   }
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -2356,7 +2338,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const tbody = document.getElementById("publicationsTableBody");
     const statsGrid = document.getElementById("publicationStatsGrid");
 
-    // Stats
     const published = pubs.filter(p => p.status === "PUBLICADO").length;
     const pending = pubs.filter(p => p.status === "PENDENTE_APROVAÇÃO").length;
     const ignored = pubs.filter(p => p.status === "IGNORADO").length;
@@ -2364,21 +2345,21 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
     if (statsGrid) {
       statsGrid.innerHTML = `
-        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#34d399;">${published}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">✅ Publicados</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(16,185,129,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.35rem;font-weight:700;color:#34d399;">${published}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">✅ Publicados</div>
         </div>
-        <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#fbbf24;">${pending}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">⏳ Pendentes</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(245,158,11,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.35rem;font-weight:700;color:#fbbf24;">${pending}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">⏳ Pendentes</div>
         </div>
-        <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:#a5b4fc;">+${totalGain}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">📈 Cliques Est. Total</div>
+        <div style="background:var(--bg-subtle);border:1px solid rgba(20,184,166,0.18);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.35rem;font-weight:700;color:#2dd4bf;">+${totalGain}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">📈 Cliques Est. Total</div>
         </div>
-        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border-color);border-radius:14px;padding:16px;text-align:center;">
-          <div style="font-size:1.8rem;font-family:var(--font-title);font-weight:800;color:var(--text-muted);">${ignored}</div>
-          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">❌ Ignorados</div>
+        <div style="background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:8px;padding:11px;text-align:center;">
+          <div style="font-size:1.35rem;font-weight:700;color:var(--text-muted);">${ignored}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">❌ Ignorados</div>
         </div>`;
     }
 
@@ -2397,16 +2378,14 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       const date = new Date(p.createdAt).toLocaleDateString("pt-BR");
       return `<tr>
         <td>${statusMap[p.status] || p.status}</td>
-        <td><div style="font-size:0.78rem;color:var(--text-muted);">${siteShort}</div><div style="font-size:0.75rem;font-family:monospace;">${urlShort}</div></td>
-        <td style="font-size:0.82rem;max-width:240px;">${p.optimizedTitle || ""}</td>
-        <td style="font-size:0.78rem;color:var(--color-secondary);">${p.mainKeyword || ""}</td>
+        <td><div style="font-size:0.73rem;color:var(--text-muted);">${siteShort}</div><div style="font-size:0.73rem;font-family:var(--font-mono);">${urlShort}</div></td>
+        <td style="font-size:0.79rem;max-width:240px;">${p.optimizedTitle || ""}</td>
+        <td style="font-size:0.77rem;color:var(--color-secondary);">${p.mainKeyword || ""}</td>
         <td style="color:#34d399;font-weight:700;">+${p.estimatedClickGain || 0}</td>
-        <td style="font-size:0.78rem;color:var(--text-muted);">${date}</td>
+        <td style="font-size:0.77rem;color:var(--text-muted);">${date}</td>
       </tr>`;
     }).join("");
   }
-
-
 
   // SITES MANAGEMENT LOGIC
   const defaultSites = [
@@ -2463,12 +2442,12 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       modalList.innerHTML = sites.map((s, index) => `
         <div class="property-item" style="justify-content: space-between;">
           <div>
-            <strong style="color:#fff;font-size:0.9rem;">${s.name}</strong>
-            <div style="font-family:monospace;font-size:0.75rem;color:var(--text-muted);">${s.id}</div>
+            <strong style="color:#fff;font-size:0.83rem;">${s.name}</strong>
+            <div style="font-family:var(--font-mono);font-size:0.73rem;color:var(--text-muted);">${s.id}</div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:8px;">
             <span class="badge ${s.type === 'domain' ? 'badge-domain' : 'badge-prefix'}">${s.type === 'domain' ? 'Domínio' : 'Prefixo'}</span>
-            <button class="btn btn-ignore" style="font-size:0.7rem;padding:4px 8px;" onclick="removeSiteProperty(${index})">🗑️ Remover</button>
+            <button class="btn btn-ignore" style="font-size:0.68rem;padding:3px 7px;" onclick="removeSiteProperty(${index})">🗑️ Remover</button>
           </div>
         </div>
       `).join("");
@@ -2522,7 +2501,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     }
   }
 
-  let showDemoIfEmpty = true;
+  let showDemoIfEmpty = false;
 
   function toggleDemoMode() {
     showDemoIfEmpty = !showDemoIfEmpty;
@@ -2542,7 +2521,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
     if (supabaseClient) {
       try {
-        // Fetch Performance Data
         let qPerf = supabaseClient.from("gsc_performance").select("*").order("date", { ascending: true });
         const { data: dbPerf, error: errPerf } = await qPerf;
         
@@ -2552,7 +2530,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           allCtrData = showDemoIfEmpty ? fallbackCtrData : [];
         }
 
-        // Fetch AI Overrides
         let qOverrides = supabaseClient.from("seo_overrides").select("*").order("created_at", { ascending: false });
         const { data: dbOverrides, error: errOverrides } = await qOverrides;
 
@@ -2562,7 +2539,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           allAiOverrides = showDemoIfEmpty ? fallbackAiOverrides : [];
         }
 
-        // Fetch Indexing Audit
         let qAudit = supabaseClient.from("gsc_indexing_audit").select("*").order("last_checked_at", { ascending: false });
         const { data: dbAudit, error: errAudit } = await qAudit;
 
@@ -2605,12 +2581,10 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   function filterAndRenderAll() {
     const selectedSite = document.getElementById("siteSelect").value;
     
-    // Filter Arrays by selected site ID
     currentFilteredCtr = selectedSite === "ALL" ? allCtrData : allCtrData.filter(i => i.site_id === selectedSite);
     currentFilteredAi = selectedSite === "ALL" ? allAiOverrides : allAiOverrides.filter(i => i.site_id === selectedSite);
     currentFilteredAudit = selectedSite === "ALL" ? allIndexingAudit : allIndexingAudit.filter(i => i.site_id === selectedSite);
 
-    // Update banner stats and performance chart according to the selected site!
     updateBannerStats(currentFilteredCtr);
     updateChartData(currentFilteredCtr);
 
@@ -2629,7 +2603,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   }
 
   function renderBiDashboard(siteId = "ALL") {
-    // 1. Forecast Grid
     const forecastGrid = document.getElementById("biForecastGrid");
     if (forecastGrid) {
       let multiplier = siteId === "sc-domain:empregape.com.br" ? 1 : siteId === "sc-domain:brasilcalculadoras.com.br" ? 0.7 : siteId.includes("mestredafederal") ? 0.5 : siteId.includes("toolbrasil") ? 0.2 : 2.4;
@@ -2640,40 +2613,39 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
       forecastGrid.innerHTML = `
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
-          <div style="font-size:0.75rem;color:var(--text-muted);">30 DIAS</div>
-          <div style="font-size:1.1rem;font-weight:800;color:#34d399;">+${f30} Cliques</div>
-          <div style="font-size:0.75rem;color:var(--color-secondary);">R$ ${(2019.6 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">30 DIAS</div>
+          <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f30} Cliques</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(2019.6 * multiplier).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
-          <div style="font-size:0.75rem;color:var(--text-muted);">60 DIAS</div>
-          <div style="font-size:1.1rem;font-weight:800;color:#34d399;">+${f60} Cliques</div>
-          <div style="font-size:0.75rem;color:var(--color-secondary);">R$ ${(4413.2 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">60 DIAS</div>
+          <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f60} Cliques</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(4413.2 * multiplier).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
-          <div style="font-size:0.75rem;color:var(--text-muted);">90 DIAS</div>
-          <div style="font-size:1.1rem;font-weight:800;color:#34d399;">+${f90} Cliques</div>
-          <div style="font-size:0.75rem;color:var(--color-secondary);">R$ ${(7180.8 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">90 DIAS</div>
+          <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f90} Cliques</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(7180.8 * multiplier).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
-          <div style="font-size:0.75rem;color:var(--text-muted);">12 MESES</div>
-          <div style="font-size:1.1rem;font-weight:800;color:#34d399;">+${f365} Cliques</div>
-          <div style="font-size:0.75rem;color:var(--color-secondary);">R$ ${(39270 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">12 MESES</div>
+          <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f365} Cliques</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(39270 * multiplier).toFixed(2)} est.</div>
         </div>
       `;
     }
 
-    // 2. Revenue Intelligence
     const revContainer = document.getElementById("revenueIntelligenceContainer");
     if (revContainer) {
       let multiplier = siteId === "sc-domain:empregape.com.br" ? 1 : siteId === "sc-domain:brasilcalculadoras.com.br" ? 0.7 : siteId.includes("mestredafederal") ? 0.5 : siteId.includes("toolbrasil") ? 0.2 : 2.4;
       revContainer.innerHTML = `
-        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
           <span>Receita Mensal Estimada:</span><strong style="color:#34d399;">R$ ${(1870 * multiplier).toFixed(2)}</strong>
         </div>
-        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
           <span>Receita AdSense:</span><strong style="color:#38bdf8;">R$ ${(830 * multiplier).toFixed(2)}</strong>
         </div>
-        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
           <span>Receita por Clique (RPC):</span><strong>R$ 1,10 / clique</strong>
         </div>
         <div style="display:flex;justify-content:space-between;">
@@ -2682,50 +2654,48 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       `;
     }
 
-    // 3. Goals Progress
     const goalsContainer = document.getElementById("goalsProgressContainer");
     if (goalsContainer) {
       goalsContainer.innerHTML = `
         <div>
-          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;">
             <span>Cliques Mensais (Meta 45.000)</span><strong>98.8% (44.460)</strong>
           </div>
-          <div style="width:100%;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+          <div style="width:100%;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
             <div style="width:98.8%;height:100%;background:#10b981;"></div>
           </div>
         </div>
         <div>
-          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;">
             <span>Receita Mensal (Meta R$ 2.000)</span><strong>93.5% (R$ 1.870)</strong>
           </div>
-          <div style="width:100%;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
+          <div style="width:100%;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
             <div style="width:93.5%;height:100%;background:#38bdf8;"></div>
           </div>
         </div>
       `;
     }
 
-    // 4. Heatmap Table
     const heatmapTbody = document.getElementById("seoHeatmapTableBody");
     if (heatmapTbody) {
       const allRows = [
-        { siteId: "sc-domain:empregape.com.br", color: "Verde (95)", badgeStyle: "background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);", url: "https://empregape.com.br/", ctr: "4.85%", pos: "1.2", impr: "24.500", desc: "Saudável e bem indexada na primeira posição." },
-        { siteId: "sc-domain:empregape.com.br", color: "Laranja (62)", badgeStyle: "background:rgba(249,115,22,0.15);color:#f97316;border:1px solid rgba(249,115,22,0.3);", url: "https://empregape.com.br/vagas/recife-pe", ctr: "0.82%", pos: "4.2", impr: "12.450", desc: "CTR crítico. Reescrita de meta title em andamento." },
-        { siteId: "sc-domain:empregape.com.br", color: "Amarelo (78)", badgeStyle: "background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.3);", url: "https://empregape.com.br/vagas/caruaru", ctr: "1.20%", pos: "3.5", impr: "5.820", desc: "Adicionar schema JobPosting JSON-LD." },
-        { siteId: "sc-domain:brasilcalculadoras.com.br", color: "Verde (92)", badgeStyle: "background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);", url: "https://brasilcalculadoras.com.br/calculadora/porcentagem", ctr: "1.10%", pos: "5.1", impr: "8.920", desc: "Adicionar FAQ JSON-LD para expandir rich snippets." },
-        { siteId: "https://www.mestredafederal.com.br/", color: "Verde (90)", badgeStyle: "background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);", url: "https://www.mestredafederal.com.br/resultado/federal-hoje", ctr: "1.45%", pos: "3.8", impr: "7.310", desc: "Atualizar título ao vivo em tempo de resultado." },
-        { siteId: "https://www.toolbrasil.com.br/", color: "Vermelho (45)", badgeStyle: "background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);", url: "https://www.toolbrasil.com.br/ferramenta/gerador-rifas", ctr: "0.40%", pos: "6.7", impr: "3.120", desc: "Reescrever H1 e metadados para aumentar engajamento." }
+        { siteId: "sc-domain:empregape.com.br", color: "Verde (95)", badgeStyle: "background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2);", url: "https://empregape.com.br/", ctr: "4.85%", pos: "1.2", impr: "24.500", desc: "Saudável e bem indexada na primeira posição." },
+        { siteId: "sc-domain:empregape.com.br", color: "Laranja (62)", badgeStyle: "background:rgba(249,115,22,0.1);color:#f97316;border:1px solid rgba(249,115,22,0.2);", url: "https://empregape.com.br/vagas/recife-pe", ctr: "0.82%", pos: "4.2", impr: "12.450", desc: "CTR crítico. Reescrita de meta title em andamento." },
+        { siteId: "sc-domain:empregape.com.br", color: "Amarelo (78)", badgeStyle: "background:rgba(234,179,8,0.1);color:#eab308;border:1px solid rgba(234,179,8,0.2);", url: "https://empregape.com.br/vagas/caruaru", ctr: "1.20%", pos: "3.5", impr: "5.820", desc: "Adicionar schema JobPosting JSON-LD." },
+        { siteId: "sc-domain:brasilcalculadoras.com.br", color: "Verde (92)", badgeStyle: "background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2);", url: "https://brasilcalculadoras.com.br/calculadora/porcentagem", ctr: "1.10%", pos: "5.1", impr: "8.920", desc: "Adicionar FAQ JSON-LD para expandir rich snippets." },
+        { siteId: "https://www.mestredafederal.com.br/", color: "Verde (90)", badgeStyle: "background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2);", url: "https://www.mestredafederal.com.br/resultado/federal-hoje", ctr: "1.45%", pos: "3.8", impr: "7.310", desc: "Atualizar título ao vivo em tempo de resultado." },
+        { siteId: "https://www.toolbrasil.com.br/", color: "Vermelho (45)", badgeStyle: "background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);", url: "https://www.toolbrasil.com.br/ferramenta/gerador-rifas", ctr: "0.40%", pos: "6.7", impr: "3.120", desc: "Reescrever H1 e metadados para aumentar engajamento." }
       ];
 
       const filteredRows = siteId === "ALL" ? allRows : allRows.filter(r => r.siteId === siteId);
       heatmapTbody.innerHTML = filteredRows.map(r => `
         <tr>
           <td><span class="badge" style="${r.badgeStyle}">${r.color}</span></td>
-          <td style="font-family:monospace;font-size:0.8rem;">${r.url}</td>
+          <td style="font-family:var(--font-mono);font-size:0.75rem;">${r.url}</td>
           <td>${r.ctr}</td>
           <td>${r.pos}</td>
           <td>${r.impr}</td>
-          <td style="font-size:0.8rem;color:#cbd5e1;">${r.desc}</td>
+          <td style="font-size:0.77rem;color:#cbd5e1;">${r.desc}</td>
         </tr>
       `).join("");
     }
@@ -2744,7 +2714,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     box.innerHTML = "⏳ <em>Consultando Inteligência de Negócios Gemini AI...</em>";
 
     setTimeout(() => {
-      // 1. Postagem / Quantas por dia / Frequência / Prática
       if (q.includes("quantas") || q.includes("post") || q.includes("frequencia") || q.includes("por dia") || q.includes("pratica") || q.includes("publicar por dia")) {
         box.innerHTML = `
           <strong>📌 Recomendação de Frequência de Postagens (Gemini AI BI):</strong><br><br>
@@ -2753,7 +2722,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           💡 <em>Dica de Ouro:</em> É preferível manter <strong>3 postagens de alta qualidade com Schema JSON-LD (JobPosting)</strong> diariamente do que fazer 20 postagens sem otimização de metadados.
         `;
       }
-      // 2. O que publicar amanhã / Conteúdo
       else if (q.includes("publicar") || q.includes("amanhã") || q.includes("amanha") || q.includes("conteudo")) {
         box.innerHTML = `
           <strong>📌 Recomendação de Conteúdo (Gemini AI BI):</strong><br><br>
@@ -2763,7 +2731,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           • <em>ROI Esperado:</em> <strong>+320 cliques/mês (~R$ 410,00/mês)</strong> em receita orgânica incremental.
         `;
       }
-      // 3. Categoria / Crescimento
       else if (q.includes("categoria") || q.includes("cresce") || q.includes("maior")) {
         box.innerHTML = `
           <strong>📊 Análise de Categorias (Gemini AI BI):</strong><br><br>
@@ -2772,7 +2739,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           • <em>Ação Recomendada:</em> Criar subcategorias por cidades (Paulista, Cabo, Igarassu).
         `;
       }
-      // 4. Atualizar / Títulos / CTR
       else if (q.includes("atualizar") || q.includes("primeiro") || q.includes("titulo") || q.includes("ctr")) {
         box.innerHTML = `
           <strong>🛠️ Otimizações Urgentes de Maior Retorno (Gemini AI BI):</strong><br><br>
@@ -2782,7 +2748,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
              • <em>Ganho Previsto:</em> <strong>+340 cliques/mês (+R$ 850,00/mês)</strong>.
         `;
       }
-      // 5. Receita / Financeiro / ROI / Adsense
       else if (q.includes("receita") || q.includes("financeiro") || q.includes("roi") || q.includes("adsense") || q.includes("dinheiro")) {
         box.innerHTML = `
           <strong>💵 Diagnóstico Financeiro & ROI (Gemini AI BI):</strong><br><br>
@@ -2791,7 +2756,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           • <em>Maior ROI Imediato:</em> Ativação de Rich Snippets FAQPage e revisão de CTA nos títulos da página principal do <strong>${siteName}</strong>.
         `;
       }
-      // 6. Top 3 / Ranking
       else if (q.includes("top 3") || q.includes("top3") || q.includes("posicao") || q.includes("ranking")) {
         box.innerHTML = `
           <strong>🎯 Candidatas ao Top 3 do Google (Gemini AI BI):</strong><br><br>
@@ -2800,7 +2764,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           • <em>Recomendação:</em> Adicionar links internos a partir das páginas principais e atualizar o schema JSON-LD.
         `;
       }
-      // 7. General fallback for any question with intelligent contextual analysis
       else {
         box.innerHTML = `
           <strong>💡 Resposta Estratégica BI Gemini AI:</strong><br><br>
@@ -2810,7 +2773,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           • <strong>Próximo Passo:</strong> Consulte a aba <em>🔥 Oportunidades CTR</em> para aprovar melhorias pendentes em 1 clique.
         `;
       }
-    }, 400);
+    }, 280);
   }
 
   function renderSeoScore() {
@@ -2842,13 +2805,13 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     metrics.forEach(m => {
       sum += m.score;
       const card = document.createElement("div");
-      card.style.cssText = "background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px;";
+      card.style.cssText = "background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 11px;";
       card.innerHTML = `
-        <div style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-size:0.68rem;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
           <span>${m.icon} ${m.name}</span>
           <span style="color:#34d399;font-weight:700;">${m.score}/100</span>
         </div>
-        <div style="font-size:1.1rem;font-weight:800;color:#fff;">${m.status}</div>
+        <div style="font-size:0.9rem;font-weight:700;color:#fff;">${m.status}</div>
       `;
       grid.appendChild(card);
     });
@@ -2872,29 +2835,29 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     `;
 
     grid.innerHTML = `
-      <div class="card">
-        <div class="card-title">🌐 Origem / Mídia</div>
-        <div style="font-size:0.85rem;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;justify-space-between;"><span>Google Organico</span><strong>65% (2.240)</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Direto</span><strong>18% (620)</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Telegram</span><strong>10% (345)</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Social</span><strong>7% (245)</strong></div>
+      <div class="card" style="padding:15px;">
+        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🌐 Origem / Mídia</div>
+        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;"><span>Google Organico</span><strong>65% (2.240)</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Direto</span><strong>18% (620)</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Telegram</span><strong>10% (345)</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Social</span><strong>7% (245)</strong></div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">📱 Dispositivos</div>
-        <div style="font-size:0.85rem;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;justify-space-between;"><span>Mobile</span><strong>78.4%</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Desktop</span><strong>19.8%</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Tablet</span><strong>1.8%</strong></div>
+      <div class="card" style="padding:15px;">
+        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">📱 Dispositivos</div>
+        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;"><span>Mobile</span><strong>78.4%</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Desktop</span><strong>19.8%</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Tablet</span><strong>1.8%</strong></div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">🚩 Países / Regiões</div>
-        <div style="font-size:0.85rem;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;justify-space-between;"><span>Brasil</span><strong>94% (3.243)</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Portugal</span><strong>3% (103)</strong></div>
-          <div style="display:flex;justify-space-between;"><span>Estados Unidos</span><strong>2% (69)</strong></div>
+      <div class="card" style="padding:15px;">
+        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🚩 Países / Regiões</div>
+        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;justify-content:space-between;"><span>Brasil</span><strong>94% (3.243)</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Portugal</span><strong>3% (103)</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span>Estados Unidos</span><strong>2% (69)</strong></div>
         </div>
       </div>
     `;
@@ -2905,18 +2868,18 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     if (!tbody) return;
     tbody.innerHTML = `
       <tr>
-        <td style="font-family:monospace;font-size:0.8rem;">https://empregape.com.br/vagas/recife-pe</td>
+        <td style="font-family:var(--font-mono);font-size:0.75rem;">https://empregape.com.br/vagas/recife-pe</td>
         <td>0.82% ➔ <strong style="color:#34d399;">4.50%</strong></td>
-        <td><strong style="color:#a5b4fc;">+560 cliques/mês</strong></td>
-        <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;">Alto Potencial</span></td>
-        <td style="font-size:0.8rem;color:#cbd5e1;">A reescrita de Title Tag com foco na query <em>"vagas de emprego recife"</em> aumentará os cliques em 450%.</td>
+        <td><strong style="color:#2dd4bf;">+560 cliques/mês</strong></td>
+        <td><span class="badge badge-domain">Alto Potencial</span></td>
+        <td style="font-size:0.75rem;color:#cbd5e1;">A reescrita de Title Tag com foco na query <em>"vagas de emprego recife"</em> aumentará os cliques em 450%.</td>
       </tr>
       <tr>
-        <td style="font-family:monospace;font-size:0.8rem;">https://brasilcalculadoras.com.br/calculadora/porcentagem</td>
+        <td style="font-family:var(--font-mono);font-size:0.75rem;">https://brasilcalculadoras.com.br/calculadora/porcentagem</td>
         <td>1.10% ➔ <strong style="color:#34d399;">3.80%</strong></td>
-        <td><strong style="color:#a5b4fc;">+320 cliques/mês</strong></td>
-        <td><span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;">Alto Potencial</span></td>
-        <td style="font-size:0.8rem;color:#cbd5e1;">Adicionar schema FAQ JSON-LD aumentará a área ocupada na SERP do Google.</td>
+        <td><strong style="color:#2dd4bf;">+320 cliques/mês</strong></td>
+        <td><span class="badge badge-domain">Alto Potencial</span></td>
+        <td style="font-size:0.75rem;color:#cbd5e1;">Adicionar schema FAQ JSON-LD aumentará a área ocupada na SERP do Google.</td>
       </tr>
     `;
   }
@@ -2926,15 +2889,15 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     if (!tbody) return;
     tbody.innerHTML = `
       <tr>
-        <td><span class="badge" style="background:rgba(239,68,68,0.15);color:#f87171;">Alto Impacto</span></td>
-        <td><strong>Otimização de CTR & Copywriting Title Tag</strong><br><span style="font-family:monospace;font-size:0.75rem;color:var(--text-muted);">https://empregape.com.br/vagas/recife-pe</span></td>
+        <td><span class="badge badge-critical">Alto Impacto</span></td>
+        <td><strong>Otimização de CTR & Copywriting Title Tag</strong><br><span style="font-family:var(--font-mono);font-size:0.73rem;color:var(--text-muted);">https://empregape.com.br/vagas/recife-pe</span></td>
         <td style="color:#34d399;font-weight:700;">+340 cliques (CTR +2.4%)</td>
         <td style="color:#fde68a;font-weight:700;">R$ 850,00/mês</td>
         <td>2 dias</td>
       </tr>
       <tr>
-        <td><span class="badge" style="background:rgba(245,158,11,0.15);color:#fde68a;">Médio Impacto</span></td>
-        <td><strong>Adição de Rich Results JobPosting & FAQ Schema</strong><br><span style="font-family:monospace;font-size:0.75rem;color:var(--text-muted);">https://brasilcalculadoras.com.br/calculadora/porcentagem</span></td>
+        <td><span class="badge badge-warning">Médio Impacto</span></td>
+        <td><strong>Adição de Rich Results JobPosting & FAQ Schema</strong><br><span style="font-family:var(--font-mono);font-size:0.73rem;color:var(--text-muted);">https://brasilcalculadoras.com.br/calculadora/porcentagem</span></td>
         <td style="color:#34d399;font-weight:700;">+180 cliques (CTR +1.2%)</td>
         <td style="color:#fde68a;font-weight:700;">R$ 420,00/mês</td>
         <td>3 dias</td>
@@ -2948,11 +2911,11 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     if (!stats || !list) return;
 
     stats.innerHTML = `
-      <div class="property-item"><div><h4 style="color:#34d399;">142</h4><p>URLs Válidas</p></div></div>
-      <div class="property-item"><div><h4 style="color:#fde68a;">8</h4><p>Excluídas</p></div></div>
-      <div class="property-item"><div><h4 style="color:#34d399;">0</h4><p>Soft 404</p></div></div>
-      <div class="property-item"><div><h4 style="color:#34d399;">0</h4><p>Erros 500</p></div></div>
-      <div class="property-item"><div><h4 style="color:#38bdf8;">100%</h4><p>Sitemap OK</p></div></div>
+      <div class="property-item"><div><h4 style="color:#34d399;">142</h4><p style="font-size:0.72rem;color:var(--text-muted);">URLs Válidas</p></div></div>
+      <div class="property-item"><div><h4 style="color:#fde68a;">8</h4><p style="font-size:0.72rem;color:var(--text-muted);">Excluídas</p></div></div>
+      <div class="property-item"><div><h4 style="color:#34d399;">0</h4><p style="font-size:0.72rem;color:var(--text-muted);">Soft 404</p></div></div>
+      <div class="property-item"><div><h4 style="color:#34d399;">0</h4><p style="font-size:0.72rem;color:var(--text-muted);">Erros 500</p></div></div>
+      <div class="property-item"><div><h4 style="color:#38bdf8;">100%</h4><p style="font-size:0.72rem;color:var(--text-muted);">Sitemap OK</p></div></div>
     `;
 
     list.innerHTML = `
@@ -2980,8 +2943,8 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     filtered.filter(i => i.kw.includes(search)).forEach(i => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td style="font-weight:700;">${i.kw}</td>
-        <td style="font-family:monospace;font-size:0.78rem;">${i.page}</td>
+        <td style="font-weight:600;color:#fff;">${i.kw}</td>
+        <td style="font-family:var(--font-mono);font-size:0.73rem;">${i.page}</td>
         <td>${i.impr}</td>
         <td>${i.clicks}</td>
         <td class="opportunity-col">${i.ctr}</td>
@@ -2997,16 +2960,16 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const container = document.getElementById("aiInsightsContainer");
     if (!container) return;
     container.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;border-bottom:1px solid var(--border-color);padding-bottom:12px;">
-        <span style="font-size:1.8rem;">🤖</span>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:9px;">
+        <span style="font-size:1.35rem;">🤖</span>
         <div>
-          <h3 style="font-family:var(--font-title);color:#fff;font-size:1.25rem;">Insights Diários em Linguagem Natural (Gemini AI)</h3>
-          <p style="font-size:0.8rem;color:var(--text-muted);">Relatório gerado automaticamente às 07:00 AM com resumos executivos e ações do dia.</p>
+          <h3 style="color:#fff;font-size:1.02rem;font-weight:600;">Insights Diários em Linguagem Natural (Gemini AI)</h3>
+          <p style="font-size:0.75rem;color:var(--text-muted);">Relatório gerado automaticamente às 07:00 AM com resumos executivos e ações do dia.</p>
         </div>
       </div>
-      <div style="line-height:1.6;font-size:0.9rem;color:#cbd5e1;display:flex;flex-direction:column;gap:14px;">
+      <div style="line-height:1.5;font-size:0.81rem;color:#cbd5e1;display:flex;flex-direction:column;gap:9px;">
         <p><strong>📌 Resumo Executivo:</strong> O sistema obteve estabilidade com <strong>SEO Score médio de 88/100</strong> nas 4 propriedades monitoradas. A taxa de indexação via Google Indexing API está em 98.4% com 0 erros de servidor (500).</p>
-        <div style="background:rgba(99,102,241,0.08);border-left:4px solid var(--color-primary);padding:14px;border-radius:6px;">
+        <div style="background:var(--bg-card);border-left:3px solid var(--color-primary);padding:11px;border-radius:6px;">
           <strong>🎯 Maiores Oportunidades do Dia:</strong><br>
           • A página <em>/vagas/recife-pe</em> está na Posição 4.2 do Google com 12.450 impressões. A reescrita do título pode gerar +340 cliques imediatos.<br>
           • A página <em>/calculadora/porcentagem</em> pode receber o schema FAQPage para aparecer em destaque (Rich Snippets).
@@ -3033,37 +2996,20 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       card.className = "property-item";
       card.style.flexDirection = "column";
       card.style.alignItems = "flex-start";
-      card.style.gap = "8px";
+      card.style.gap = "5px";
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
-          <strong style="font-size:0.9rem;">${s.name}</strong>
-          <span class="badge" style="background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);">${s.status}</span>
+          <strong style="font-size:0.81rem;color:#fff;">${s.name}</strong>
+          <span class="badge badge-domain" style="background:rgba(16,185,129,0.08);color:#34d399;border:1px solid rgba(16,185,129,0.18);">${s.status}</span>
         </div>
-        <div style="font-size:0.78rem;color:var(--text-muted);display:flex;justify-content:space-between;width:100%;">
+        <div style="font-size:0.72rem;color:var(--text-muted);display:flex;justify-content:space-between;width:100%;">
           <span>${s.desc}</span>
-          <span style="font-family:monospace;color:var(--color-secondary);">${s.lat}</span>
+          <span style="font-family:var(--font-mono);color:var(--color-secondary);">${s.lat}</span>
         </div>
       `;
       grid.appendChild(card);
     });
   }
-
-  function switchTab(evt, tabId) {
-    const tabcontents = document.getElementsByClassName("tab-content");
-    for (let i = 0; i < tabcontents.length; i++) {
-      tabcontents[i].classList.remove("active");
-    }
-
-    const tablinks = document.getElementsByClassName("tab-btn");
-    for (let i = 0; i < tablinks.length; i++) {
-      tablinks[i].classList.remove("active");
-    }
-
-    const targetTab = document.getElementById(tabId);
-    if (targetTab) targetTab.classList.add("active");
-    if (evt && evt.currentTarget) evt.currentTarget.classList.add("active");
-  }
-
 
   function renderCtrOpportunities(data = null) {
     const list = data || currentFilteredCtr;
@@ -3078,7 +3024,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">Nenhuma oportunidade encontrada.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma oportunidade encontrada.</td></tr>`;
       return;
     }
 
@@ -3089,20 +3035,20 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       const urlStr = item.page || item.url || "";
       const queryStr = item.query || item.target_query || "vagas de emprego";
 
-      // Verifica se já foi aprovado
       const existing = allAiOverrides.find(o => o.url === urlStr || o.target_query === queryStr);
       const isApproved = existing ? existing.approved : false;
 
       const tr = document.createElement("tr");
 
       const tdUrl = document.createElement("td");
-      tdUrl.style.fontFamily = "monospace";
-      tdUrl.style.fontSize = "0.8rem";
+      tdUrl.style.fontFamily = "var(--font-mono)";
+      tdUrl.style.fontSize = "0.75rem";
       tdUrl.style.wordBreak = "break-all";
       tdUrl.innerText = urlStr;
 
       const tdQuery = document.createElement("td");
       tdQuery.style.fontWeight = "600";
+      tdQuery.style.color = "#fff";
       tdQuery.innerText = queryStr;
 
       const tdImpr = document.createElement("td");
@@ -3117,12 +3063,12 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
       const tdAction = document.createElement("td");
       if (isApproved) {
-        tdAction.innerHTML = `<span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3);">✅ Aprovado</span>`;
+        tdAction.innerHTML = `<span class="badge" style="background: rgba(16, 185, 129, 0.08); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.18);">✅ Aprovado</span>`;
       } else {
         const btn = document.createElement("button");
         btn.className = "btn btn-approve";
-        btn.style.fontSize = "0.75rem";
-        btn.style.padding = "4px 10px";
+        btn.style.fontSize = "0.72rem";
+        btn.style.padding = "3px 7px";
         btn.innerText = "🤖 Ver Otimização por IA";
         btn.onclick = () => openAiOptimizeModal(urlStr, queryStr, imprVal, ctrVal, posVal);
         tdAction.appendChild(btn);
@@ -3145,49 +3091,49 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     container.innerHTML = "";
 
     if (list.length === 0) {
-      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:24px;">Nenhuma sugestão pendente para este filtro.</div>`;
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma sugestão pendente para este filtro.</div>`;
       return;
     }
 
     list.forEach(item => {
       const isApproved = item.approved;
       const badgeStyle = isApproved 
-        ? `background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3);`
-        : `background: rgba(245, 158, 11, 0.15); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.3);`;
+        ? `background: rgba(16, 185, 129, 0.08); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.18);`
+        : `background: rgba(245, 158, 11, 0.08); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.18);`;
       const badgeText = isApproved ? "✅ Aprovado & Publicado" : "⚠️ Pendente de Aprovação";
 
       const card = document.createElement("div");
       card.className = "index-item";
       card.style.flexDirection = "column";
       card.style.alignItems = "flex-start";
-      card.style.gap = "14px";
+      card.style.gap = "10px";
 
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap:wrap; gap:10px;">
-          <span class="index-url" style="font-weight: 700;">${item.url}</span>
+          <span class="index-url" style="font-weight: 600;">${item.url}</span>
           <span class="badge" style="${badgeStyle}">${badgeText}</span>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-muted);">
+        <div style="font-size: 0.75rem; color: var(--text-muted);">
           Palavra-chave foco: <strong style="color: #fff;">"${item.target_query || 'vagas de emprego'}"</strong>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; background: rgba(0,0,0,0.25); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); opacity: ${isApproved ? 0.8 : 1}">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; background: var(--bg-card); padding: 11px; border-radius: 6px; border: 1px solid var(--border-color); opacity: ${isApproved ? 0.8 : 1}">
           <div>
-            <div style="font-size: 0.72rem; color: var(--color-danger); font-weight: 700; margin-bottom: 4px;">ANTES (Original)</div>
-            <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color:#cbd5e1;">${item.original_title || "Título Padrão"}</div>
-            <div style="font-size: 0.78rem; color: var(--text-muted);">${item.original_meta || "Sem meta-description customizada."}</div>
+            <div style="font-size: 0.66rem; color: var(--color-danger); font-weight: 700; margin-bottom: 3px;">ANTES (Original)</div>
+            <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 3px; color:#cbd5e1;">${item.original_title || "Título Padrão"}</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">${item.original_meta || "Sem meta-description customizada."}</div>
           </div>
           <div>
-            <div style="font-size: 0.72rem; color: var(--color-success); font-weight: 700; margin-bottom: 4px;">DEPOIS (Otimizado por IA Gemini)</div>
-            <div style="font-size: 0.85rem; font-weight: 600; color: #a5b4fc; margin-bottom: 4px;">${item.optimized_title}</div>
-            <div style="font-size: 0.78rem; color: #e2e8f0;">${item.optimized_meta}</div>
+            <div style="font-size: 0.66rem; color: var(--color-success); font-weight: 700; margin-bottom: 3px;">DEPOIS (Otimizado por IA Gemini)</div>
+            <div style="font-size: 0.78rem; font-weight: 600; color: #2dd4bf; margin-bottom: 3px;">${item.optimized_title}</div>
+            <div style="font-size: 0.72rem; color: #e2e8f0;">${item.optimized_meta}</div>
           </div>
         </div>
-        <div style="display: flex; gap: 10px; align-self: flex-end;">
+        <div style="display: flex; gap: 8px; align-self: flex-end;">
           ${!isApproved ? `
             <button class="btn btn-approve" onclick="approveOverride(${item.id})">✓ Aprovar e Publicar</button>
             <button class="btn btn-ignore" onclick="ignoreOverride(${item.id})">Ignorar</button>
           ` : `
-            <span style="font-size:0.78rem;color:var(--color-success);font-weight:600;">✨ Otimização no ar (Rebuild concluído)</span>
+            <span style="font-size:0.72rem;color:var(--color-success);font-weight:600;">✨ Otimização no ar (Rebuild concluído)</span>
           `}
         </div>
       `;
@@ -3231,7 +3177,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       }
     }
     
-    // Update local state
     const target = allAiOverrides.find(i => i.id === id);
     if (target) target.approved = true;
 
@@ -3285,18 +3230,22 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           {
             label: 'Cliques Diários',
             data: [65, 78, 90, 85, 110, 125, 140, 135, 150, 165, 180, 195, 210, 230],
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: '#14b8a6',
+            backgroundColor: 'rgba(20, 184, 166, 0.05)',
             fill: true,
-            tension: 0.4
+            tension: 0.35,
+            borderWidth: 2,
+            pointRadius: 3
           },
           {
             label: 'Impressões (x10)',
             data: [120, 140, 160, 150, 190, 210, 240, 230, 260, 280, 310, 340, 370, 410],
             borderColor: '#38bdf8',
             backgroundColor: 'transparent',
-            borderDash: [5, 5],
-            tension: 0.4
+            borderDash: [4, 4],
+            tension: 0.35,
+            borderWidth: 1.5,
+            pointRadius: 2
           }
         ]
       },
@@ -3304,11 +3253,11 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } } }
+          legend: { labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } } }
         },
         scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#475569', font: { size: 10 } } },
+          y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#475569', font: { size: 10 } } }
         }
       }
     });
@@ -3317,7 +3266,6 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
   function updateChartData(dbPerf) {
     if (!chartInstance || !dbPerf || dbPerf.length === 0) return;
     
-    // Group by date
     const dateMap = {};
     dbPerf.forEach(r => {
       const d = r.date || "Hoje";
@@ -3357,8 +3305,9 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       tablinks[i].classList.remove("active");
     }
 
-    document.getElementById(tabId).classList.add("active");
-    evt.currentTarget.classList.add("active");
+    const target = document.getElementById(tabId);
+    if (target) target.classList.add("active");
+    if (evt && evt.currentTarget) evt.currentTarget.classList.add("active");
   }
 
   let currentModalId = null;
@@ -3374,11 +3323,9 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
       const elQuery = document.getElementById("modalQuery");
       if (elQuery) elQuery.innerText = `"${query}"`;
 
-      // Busca se já tem override existente ou cria sugestão inteligente
       let override = allAiOverrides.find(o => o.url === url || o.target_query === query);
       
       if (!override) {
-        const cleanUrl = url.replace(/^https?:\/\/[^\/]+/, "");
         const isJob = url.includes("/vaga/");
         
         override = {
@@ -3468,76 +3415,76 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     </div>
 
     <div>
-      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;font-weight:700;">PÁGINA & BUSCA NO GOOGLE</div>
-      <div id="modalUrl" style="font-family:monospace;font-size:0.85rem;color:var(--color-secondary);font-weight:bold;word-break:break-all;margin-bottom:6px;"></div>
-      <div style="font-size:0.82rem;color:#fff;">Palavra-Chave Foco: <span id="modalQuery" style="color:#a5b4fc;font-weight:700;"></span></div>
+      <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:3px;font-weight:600;">PÁGINA & BUSCA NO GOOGLE</div>
+      <div id="modalUrl" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--color-secondary);font-weight:600;word-break:break-all;margin-bottom:5px;"></div>
+      <div style="font-size:0.78rem;color:#fff;">Palavra-Chave Foco: <span id="modalQuery" style="color:var(--color-primary-light);font-weight:600;"></span></div>
     </div>
 
     <div class="ai-reason-box">
-      <div style="font-weight:700;color:var(--color-primary);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+      <div style="font-weight:600;color:var(--color-primary-light);margin-bottom:5px;display:flex;align-items:center;gap:6px;">
         🧠 Raciocínio & Explicação da IA:
       </div>
       <div id="modalReasoning"></div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(0,0,0,0.35); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: var(--bg-subtle); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
       <div>
-        <div style="font-size: 0.72rem; color: var(--color-danger); font-weight: 700; margin-bottom: 6px;">❌ ANTES (Original)</div>
-        <div id="modalOriginalTitle" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color:#cbd5e1;"></div>
-        <div id="modalOriginalMeta" style="font-size: 0.78rem; color: var(--text-muted);"></div>
+        <div style="font-size: 0.66rem; color: var(--color-danger); font-weight: 700; margin-bottom: 3px;">❌ ANTES (Original)</div>
+        <div id="modalOriginalTitle" style="font-size: 0.78rem; font-weight: 600; margin-bottom: 3px; color:#cbd5e1;"></div>
+        <div id="modalOriginalMeta" style="font-size: 0.72rem; color: var(--text-muted);"></div>
       </div>
       <div>
-        <div style="font-size: 0.72rem; color: var(--color-success); font-weight: 700; margin-bottom: 6px;">🏆 DEPOIS (Otimizado por IA)</div>
-        <div id="modalOptimizedTitle" style="font-size: 0.85rem; font-weight: 600; color: #a5b4fc; margin-bottom: 6px;"></div>
-        <div id="modalOptimizedMeta" style="font-size: 0.78rem; color: #e2e8f0;"></div>
+        <div style="font-size: 0.66rem; color: var(--color-success); font-weight: 700; margin-bottom: 3px;">🏆 DEPOIS (Otimizado por IA)</div>
+        <div id="modalOptimizedTitle" style="font-size: 0.78rem; font-weight: 600; color: #2dd4bf; margin-bottom: 3px;"></div>
+        <div id="modalOptimizedMeta" style="font-size: 0.72rem; color: #e2e8f0;"></div>
       </div>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 6px;">
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 2px;">
       <button class="btn btn-ignore" onclick="closeAiModal()">Fechar</button>
-      <button id="modalApproveBtn" class="btn btn-approve" style="padding:10px 20px;font-size:0.9rem;">✓ Aprovar e Publicar no Site</button>
+      <button id="modalApproveBtn" class="btn btn-approve" style="padding:7px 14px;font-size:0.8rem;">✓ Aprovar e Publicar no Site</button>
     </div>
   </div>
 </div>
 
 <!-- MANAGE SITES MODAL -->
 <div id="manageSitesModal" class="modal-overlay">
-  <div class="modal-content" style="max-width: 680px;">
+  <div class="modal-content" style="max-width: 600px;">
     <div class="modal-header">
       <h3>🌐 Gerenciar Propriedades Search Console</h3>
       <button class="modal-close" onclick="closeManageSitesModal()">&times;</button>
     </div>
 
     <!-- FORM ADD SITE -->
-    <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 18px; margin-bottom: 24px;">
-      <h4 style="font-size: 0.95rem; color: #fff; margin-bottom: 12px; font-family: var(--font-title);">➕ Adicionar Nova Propriedade</h4>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+    <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 18px;">
+      <h4 style="font-size: 0.86rem; color: #fff; margin-bottom: 9px; font-weight: 600;">➕ Adicionar Nova Propriedade</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px;">
         <div>
-          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome Amigável do Site</label>
+          <label style="font-size: 0.68rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Nome Amigável do Site</label>
           <input type="text" id="newSiteNameInput" class="filter-input" placeholder="Ex: Meu Portal de Vagas">
         </div>
         <div>
-          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Tipo de Propriedade GSC</label>
+          <label style="font-size: 0.68rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Tipo de Propriedade GSC</label>
           <select id="newSiteTypeInput" class="site-select" style="width: 100%;">
             <option value="domain">Domínio (sc-domain:)</option>
             <option value="prefix">Prefixo de URL (https://)</option>
           </select>
         </div>
       </div>
-      <div style="margin-bottom: 14px;">
-        <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">ID da Propriedade no Search Console</label>
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.68rem; color: var(--text-muted); display: block; margin-bottom: 3px;">ID da Propriedade no Search Console</label>
         <input type="text" id="newSiteIdInput" class="filter-input" placeholder="Ex: sc-domain:meusite.com.br ou https://www.meusite.com.br/">
       </div>
       <button class="btn btn-approve" style="width: 100%; justify-content: center;" onclick="addNewSiteFromModal()">➕ Salvar Novo Site no Painel</button>
     </div>
 
     <!-- CURRENT SITES LIST -->
-    <h4 style="font-size: 0.95rem; color: #fff; margin-bottom: 12px; font-family: var(--font-title);">📋 Sites Monitorados Atualmente</h4>
-    <div id="modalSitesListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;">
+    <h4 style="font-size: 0.86rem; color: #fff; margin-bottom: 9px; font-weight: 600;">📋 Sites Monitorados Atualmente</h4>
+    <div id="modalSitesListContainer" style="display: flex; flex-direction: column; gap: 7px; max-height: 200px; overflow-y: auto;">
       <!-- Dynamically Populated -->
     </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+    <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
       <button class="btn btn-ignore" onclick="closeManageSitesModal()">Fechar</button>
     </div>
   </div>
@@ -3545,4 +3492,3 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
 </body>
 </html>
-

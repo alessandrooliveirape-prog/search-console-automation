@@ -136,7 +136,38 @@ export async function runAbTestingEngine(): Promise<AbTestResult[]> {
           recommendation = `🏆 Teste Vencedor! Aumento de ${ctrChangePct.toFixed(1)}% na CTR e +${clicksChangePct.toFixed(1)}% em cliques. Mantido no ar!`;
         } else if (ctrChangePct <= -15 || clicksChangePct <= -20) {
           outcome = "PERDEDOR";
-          recommendation = `⚠️ Queda de desempenho detectada (-${Math.abs(ctrChangePct).toFixed(1)}% CTR). Recomendado rollback para o título original.`;
+          recommendation = `⚠️ AUTO-ROLLBACK EXECUTADO! Queda de desempenho detectada (-${Math.abs(ctrChangePct).toFixed(1)}% CTR). Título revertido para o original.`;
+
+          // EXECUÇÃO DO AUTO-ROLLBACK
+          try {
+            // 1. Atualiza bi_content_publications
+            await supabase
+              .from("bi_content_publications")
+              .update({ status: "ROLLBACK_EXECUTADO", updated_at: new Date().toISOString() })
+              .eq("id", pub.id);
+
+            // 2. Desativa no seo_overrides
+            await supabase
+              .from("seo_overrides")
+              .update({ approved: false, updated_at: new Date().toISOString() })
+              .eq("site_id", site.id)
+              .eq("url", pub.url);
+
+            // 3. Tenta disparar notificação urgente no WhatsApp + Telegram
+            const { sendWhatsAppAlert } = await import("../services/notifications");
+            const rollbackMsg =
+              `🔄 *AUTO-ROLLBACK EXECUTADO (A/B Test Perdedor)*\n\n` +
+              `🌐 *Site:* ${site.name}\n` +
+              `📄 *Página:* \`${pub.url.replace(/^https?:\/\/[^\/]+/, "")}\`\n` +
+              `📊 *Variação CTR:* -${Math.abs(ctrChangePct).toFixed(1)}% (Pré: ${preCtr.toFixed(2)}% ➔ Pós: ${postCtr.toFixed(2)}%)\n` +
+              `🖱️ *Variação Cliques:* -${Math.abs(clicksChangePct).toFixed(1)}% (${preClicks} ➔ ${postClicks})\n\n` +
+              `⚠️ *Ação:* O sistema restaurou automaticamente o título original para estancar a perda de tráfego.`;
+
+            await sendWhatsAppAlert(rollbackMsg);
+            console.log(`[A/B Testing Engine] Auto-Rollback executado com sucesso para: ${pub.url}`);
+          } catch (rbErr: any) {
+            console.error(`[A/B Testing Engine] Erro ao executar Auto-Rollback em ${pub.url}:`, rbErr.message);
+          }
         }
 
         const resItem: AbTestResult = {

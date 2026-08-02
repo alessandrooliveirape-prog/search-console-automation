@@ -183,6 +183,10 @@ export async function runCompleteBiEngine() {
     // 17. Schema & Position 0 Generator — gera JSON-LD e trechos para Posição 0
     await runSchemaSnippetGenerator();
 
+    // 18. Traffic Drop Detector — analisa quedas WoW de impressões e aciona IA
+    const { runTrafficDropDetector } = await import("../analyzers/trafficDropDetector");
+    await runTrafficDropDetector();
+
     const durationMs = Date.now() - startTime;
     logEvent("system", "INFO", `[BI Orchestrator 6.0] Sucesso! Executado em ${durationMs}ms`, { durationMs, success: true });
     return true;

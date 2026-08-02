@@ -5,7 +5,7 @@ import { saveJson, saveCsv } from "../outputs/files";
 import { logAlert } from "../outputs/alerts";
 import { supabase } from "../config/supabase";
 import { optimizeMetadata } from "../services/gemini";
-import { sendTelegramApprovalRequest } from "../services/notifications";
+import { sendTelegramApprovalRequest, sendAutoExecutionAlert } from "../services/notifications";
 
 
 function dateOffset(days: number) {
@@ -146,6 +146,9 @@ export async function runDailyPerformanceJob() {
           }
 
           // Executa a otimização com o Gemini
+          const isPosGreaterThan30 = (op.position || 0) > 30;
+
+          // Executa a otimização com o Gemini
           const optimized = await optimizeMetadata({
             url: op.page,
             query: op.query,
@@ -154,7 +157,10 @@ export async function runDailyPerformanceJob() {
             position: op.position
           });
 
-          // Grava a sugestão no Supabase com 'approved = false' para aprovação do usuário
+          // Se a posição for > 30, executa/aprova automaticamente
+          const isApproved = isPosGreaterThan30;
+
+          // Grava a sugestão no Supabase com 'approved' dependendo da posição
           const { data: upsertedData, error } = await supabase
             .from("seo_overrides")
             .upsert({
@@ -165,7 +171,8 @@ export async function runDailyPerformanceJob() {
               optimized_title: optimized.title,
               optimized_meta: optimized.metaDescription,
               target_query: op.query,
-              approved: false,
+              approved: isApproved,
+              approved_at: isApproved ? new Date().toISOString() : null,
               updated_at: new Date().toISOString()
             }, { onConflict: "site_id,url" })
             .select("id")
@@ -174,8 +181,38 @@ export async function runDailyPerformanceJob() {
           if (error) {
             console.error(`[SEO Agent] Erro ao gravar otimização no Supabase para ${op.page}:`, error.message);
           } else {
-            console.log(`[SEO Agent] Sugestão salva no Supabase para: ${op.page}`);
-            if (upsertedData?.id) {
+            console.log(`[SEO Agent] Sugestão salva no Supabase para: ${op.page} (Auto-Executada: ${isApproved})`);
+            
+            if (isPosGreaterThan30) {
+              // 1. Notifica auto-execução via WhatsApp e Telegram
+              await sendAutoExecutionAlert({
+                siteName: site.name,
+                url: op.page,
+                query: op.query,
+                position: op.position,
+                clicks: op.clicks,
+                impressions: op.impressions,
+                originalTitle,
+                optimizedTitle: optimized.title,
+                optimizedMeta: optimized.metaDescription
+              });
+
+              // 2. Dispara IndexNow ping para Bing/Yandex/DuckDuckGo instantâneo
+              const { sendIndexNowPing } = await import("../services/indexNow");
+              await sendIndexNowPing({
+                host: site.name,
+                urlList: [op.page]
+              });
+
+              // 3. Publica diretamente via REST API do WordPress (se configurado)
+              const { publishToWordPress } = await import("../services/wordpressPublisher");
+              await publishToWordPress({
+                url: op.page,
+                title: optimized.title,
+                metaDescription: optimized.metaDescription
+              });
+            } else if (upsertedData?.id) {
+              // Notifica para aprovação interativa manual no Telegram
               await sendTelegramApprovalRequest({
                 id: upsertedData.id,
                 url: op.page,
