@@ -3,6 +3,7 @@ import path from "path";
 import { generateExecutiveSummary } from "./executiveSummary";
 import { calculateRevenueIntelligence } from "./revenueIntelligence";
 import { askBusinessIntelligenceAi } from "./conversationalAi";
+import { generateReport, ReportGranularity } from "./reportBuilder";
 import { logEvent } from "../services/logger";
 
 const REPORTS_DIR = path.join(process.cwd(), "reports", "bi");
@@ -15,6 +16,13 @@ export type ReportType = "executive" | "technical" | "ai_summary" | "weekly" | "
 
 export async function generateBiReport(type: ReportType = "executive", siteId = "sc-domain:empregape.com.br"): Promise<string> {
   const timestamp = new Date().toISOString().slice(0, 10);
+
+  if (type === "weekly" || type === "monthly") {
+    const granularity: ReportGranularity = type === "weekly" ? "weekly" : "monthly";
+    const result = await generateReport({ site: siteId, granularity });
+    return result.pdfPath;
+  }
+
   const fileName = `report-${type}-${timestamp}.md`;
   const filePath = path.join(REPORTS_DIR, fileName);
 
@@ -22,7 +30,7 @@ export async function generateBiReport(type: ReportType = "executive", siteId = 
   const revenue = await calculateRevenueIntelligence(siteId);
   const aiAnswer = await askBusinessIntelligenceAi("O que devo publicar amanhã?", siteId);
 
-  const markdownContent = `# 📊 Relatório Enterprise BI 4.0 (${type.toUpperCase()}) - ${timestamp}
+  const markdownContent = `# 📊 Relatório Enterprise BI 6.0 (${type.toUpperCase()}) - ${timestamp}
 
 ## 1. Score Executivo e Saúde Geral
 * **Score Executivo (0-100)**: ${summary.executiveScore}/100 (**${summary.scoreLabel}**)
@@ -57,7 +65,7 @@ ${aiAnswer.answerMarkdown}
 **ROI Estimado**: ${aiAnswer.estimatedRoi}
 
 ---
-*Gerado automaticamente pelo Search Console Automation 4.0 Enterprise BI*
+*Gerado automaticamente pelo Search Console Automation 6.0 Enterprise BI*
 `;
 
   fs.writeFileSync(filePath, markdownContent, "utf8");

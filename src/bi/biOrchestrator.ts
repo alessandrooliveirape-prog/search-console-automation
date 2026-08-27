@@ -12,6 +12,7 @@ import { runCompetitiveIntelligence } from "./competitiveInsight";
 import { generateMultiHorizonForecast } from "./forecastEngine";
 import { trackSiteGoals } from "./goalsTracker";
 import { generateBiReport } from "./pdfReportGenerator";
+import { generateReport } from "./reportBuilder";
 import { logEvent } from "../services/logger";
 // ── Fase 5.0: Smart Alerts, Content Publisher & Editorial Calendar ──
 import { runSmartAlertsEngine } from "./smartAlerts";
@@ -23,7 +24,7 @@ import { runCannibalizationDetector } from "./cannibalizationDetector";
 import { runSchemaSnippetGenerator } from "./schemaSnippetGenerator";
 
 export async function runCompleteBiEngine() {
-  console.log("[BI Orchestrator 4.0] Executando rotina central de Business Intelligence com dados reais...");
+  console.log("[BI Orchestrator 6.0] Executando rotina central de Business Intelligence com dados reais...");
   const startTime = Date.now();
 
   try {
@@ -89,9 +90,8 @@ export async function runCompleteBiEngine() {
         .eq("indexed", true);
 
       // 5. Calcular receita estimada (modelo simples: cliques × CPC médio estimado)
-      // CPC médio estimado de R$1.10 por clique orgânico convertido (taxa 4.5%)
       const estimated_revenue = Number((clicks * 0.045 * 1.10).toFixed(2));
-      const adsense_revenue = Number((impressions * 0.0002).toFixed(2)); // RPM estimado de R$0.20/mil impressões
+      const adsense_revenue = Number((impressions * 0.0002).toFixed(2));
 
       // 6. CWV: buscar do cache de SEO Score (se disponível)
       const { data: seoDetails } = await supabase
@@ -186,6 +186,9 @@ export async function runCompleteBiEngine() {
     // 18. Traffic Drop Detector — analisa quedas WoW de impressões e aciona IA
     const { runTrafficDropDetector } = await import("../analyzers/trafficDropDetector");
     await runTrafficDropDetector();
+
+    // 19. Report Builder — Gerar relatório semanal com atribuição de causa
+    await generateReport({ site: "empregape.com.br", granularity: "weekly" });
 
     const durationMs = Date.now() - startTime;
     logEvent("system", "INFO", `[BI Orchestrator 6.0] Sucesso! Executado em ${durationMs}ms`, { durationMs, success: true });

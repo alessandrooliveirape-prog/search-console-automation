@@ -124,11 +124,11 @@ export async function sendAutoExecutionAlert(data: {
   const formattedPos = data.position.toFixed(1);
 
   const message =
-    `🤖⚡ *Otimização de SEO Auto-Executada (Posição > 30)*\n\n` +
+    `🤖⚡ *Otimização de SEO Auto-Executada (Posição >= 20)*\n\n` +
     `🌐 *Site:* ${data.siteName}\n` +
     `📄 *Página:* \`${urlPath}\`\n` +
     `🔑 *Palavra-chave:* "${data.query}"\n` +
-    `📊 *Posição GSC:* ${formattedPos} (Posição > 30 — Auto-Aprovada pelo Sistema)\n` +
+    `📊 *Posição GSC:* ${formattedPos} (Posição >= 20 — Auto-Aprovada pelo Sistema)\n` +
     `👁️ *Impressões:* ${data.impressions.toLocaleString("pt-BR")} | Cliques: ${data.clicks}\n\n` +
     `❌ *Antes:* _${data.originalTitle || "Padrão do site"}_\n` +
     `🏆 *Depois (IA Gemini):* *${data.optimizedTitle}*\n` +

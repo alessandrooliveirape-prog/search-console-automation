@@ -1,6 +1,8 @@
 import { google } from "googleapis";
 import http from "node:http";
 import url from "node:url";
+import fs from "node:fs";
+import path from "node:path";
 import { exec } from "node:child_process";
 import "dotenv/config";
 
@@ -51,19 +53,34 @@ const server = http.createServer(async (req, res) => {
       const q = url.parse(req.url, true).query;
       if (q.code) {
         const code = q.code as string;
+        const { tokens } = await oauth2Client.getToken(code);
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
         res.end("<h1>Autorização concluída!</h1><p>Você pode fechar esta aba e retornar ao terminal.</p>");
         
-        console.log("\nCódigo recebido. Trocando por tokens...");
-        const { tokens } = await oauth2Client.getToken(code);
-        
-        console.log("\n====================================================");
-        console.log("TOKEN DE ATUALIZAÇÃO (REFRESH TOKEN) ENCONTRADO:");
-        console.log("====================================================");
-        console.log(tokens.refresh_token);
-        console.log("====================================================");
-        console.log("Insira o token acima no seu arquivo .env em GOOGLE_REFRESH_TOKEN=");
-        console.log("====================================================");
+        if (tokens.refresh_token) {
+          console.log("\n====================================================");
+          console.log("TOKEN DE ATUALIZAÇÃO (REFRESH TOKEN) ENCONTRADO:");
+          console.log("====================================================");
+          console.log(tokens.refresh_token);
+          console.log("====================================================");
+
+          // Escreve automaticamente no arquivo .env
+          const envPath = path.resolve(process.cwd(), ".env");
+          if (fs.existsSync(envPath)) {
+            let envContent = fs.readFileSync(envPath, "utf8");
+            if (envContent.includes("GOOGLE_REFRESH_TOKEN=")) {
+              envContent = envContent.replace(/GOOGLE_REFRESH_TOKEN=.*/g, `GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`);
+            } else {
+              envContent += `\nGOOGLE_REFRESH_TOKEN=${tokens.refresh_token}\n`;
+            }
+            fs.writeFileSync(envPath, envContent, "utf8");
+            console.log("✅ Token salvo AUTOMATICAMENTE no seu arquivo .env!");
+          } else {
+            console.log("⚠️ Arquivo .env não encontrado. Crie-o e insira GOOGLE_REFRESH_TOKEN=" + tokens.refresh_token);
+          }
+        } else {
+          console.warn("⚠️ Nenhum refresh_token retornado pelo Google. Tente revogar os acessos da app em https://myaccount.google.com/permissions e execute novamente.");
+        }
         
         server.close(() => {
           process.exit(0);

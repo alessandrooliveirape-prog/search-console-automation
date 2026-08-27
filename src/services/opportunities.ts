@@ -49,7 +49,7 @@ export async function runOpportunitiesJob(): Promise<OpportunityItem[]> {
       .gte("impressions", 100)          // mínimo de impressões para relevância
       .lte("ctr", 0.04)                 // CTR abaixo de 4% (oportunidade de melhoria)
       .gte("position", 1)
-      .lte("position", 30)
+      .lte("position", 100)
       .order("impressions", { ascending: false })
       .limit(50);
 

@@ -21,3 +21,5 @@ desktop.ini
 # Temporary data files
 data/*.json
 !data/.gitkeep
+backups/
+scratch/

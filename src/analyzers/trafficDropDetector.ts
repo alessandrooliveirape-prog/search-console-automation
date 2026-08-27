@@ -76,65 +76,73 @@ export async function runTrafficDropDetector(): Promise<TrafficDropAlert[]> {
         currMap[page].impressions += r.impressions || 0;
       }
 
-      // Compara WoW para cada página com tráfego relevante (mínimo 50 impressões na semana anterior)
+      // Coleta candidatos com queda relevante (mínimo 50 impressões na semana anterior e queda >= 20%)
+      const candidates: Array<{ page: string; prevStats: { clicks: number; impressions: number; bestQuery: string }; currStats: { clicks: number; impressions: number; bestQuery: string }; imprDropPct: number }> = [];
+
       for (const [page, prevStats] of Object.entries(prevMap)) {
         if (prevStats.impressions < 50) continue;
-
         const currStats = currMap[page] || { clicks: 0, impressions: 0, bestQuery: prevStats.bestQuery };
         const imprDropPct = ((prevStats.impressions - currStats.impressions) / prevStats.impressions) * 100;
-
-        // Se a queda de impressões for superior a 20%
         if (imprDropPct >= 20) {
-          const query = currStats.bestQuery || prevStats.bestQuery || "termo principal";
-          
-          // Diagnóstico inteligente da IA Gemini
-          let aiDiagnosis = "Queda acentuada no volume de buscas ou perda de visibilidade na SERP.";
-          let suggestedAction = "Revisar metadados, atualizar conteúdo e re-indexar no Google e IndexNow.";
+          candidates.push({ page, prevStats, currStats, imprDropPct });
+        }
+      }
 
-          try {
-            const aiResult = await optimizeMetadata({
-              url: page,
-              query: query,
-              clicks: currStats.clicks,
-              impressions: currStats.impressions,
-              position: 15
-            });
-            aiDiagnosis = `A IA Gemini sugere atualizar para a copy: "${aiResult.title}". Meta: ${aiResult.metaDescription}`;
-          } catch (e) {
-            // Utiliza diagnóstico padrão em caso de erro na API
-          }
+      // Ordena pelos maiores impactos (maior queda percentual e volume) e limita aos top 5 por site
+      candidates.sort((a, b) => (b.prevStats.impressions - b.currStats.impressions) - (a.prevStats.impressions - a.currStats.impressions));
+      const topCandidates = candidates.slice(0, 5);
 
-          const alertItem: TrafficDropAlert = {
-            siteId: site.id,
-            siteName: site.name,
+      for (const item of topCandidates) {
+        const { page, prevStats, currStats, imprDropPct } = item;
+        const query = currStats.bestQuery || prevStats.bestQuery || "termo principal";
+
+        // Diagnóstico inteligente da IA Gemini
+        let aiDiagnosis = "Queda acentuada no volume de buscas ou perda de visibilidade na SERP.";
+        let suggestedAction = "Revisar metadados, atualizar conteúdo e re-indexar no Google e IndexNow.";
+
+        try {
+          const aiResult = await optimizeMetadata({
             url: page,
             query: query,
-            prevImpressions: prevStats.impressions,
-            currImpressions: currStats.impressions,
-            dropPercent: Number(imprDropPct.toFixed(1)),
-            prevClicks: prevStats.clicks,
-            currClicks: currStats.clicks,
-            aiDiagnosis,
-            suggestedAction,
-            detectedAt: new Date().toISOString()
-          };
-
-          alerts.push(alertItem);
-
-          // Dispara alerta preditivo urgente via WhatsApp + Telegram
-          const urlPath = page.replace(/^https?:\/\/[^\/]+/, "");
-          const alertMsg =
-            `🚨 *ALERTA PREDITIVO DE QUEDA DE TRÁFEGO (WoW)*\n\n` +
-            `🌐 *Site:* ${site.name}\n` +
-            `📄 *Página:* \`${urlPath}\`\n` +
-            `🔑 *Palavra-chave:* "${query}"\n` +
-            `📉 *Queda de Impressões:* -${alertItem.dropPercent}% (${prevStats.impressions} ➔ ${currStats.impressions})\n` +
-            `🖱️ *Cliques:* ${prevStats.clicks} ➔ ${currStats.clicks}\n\n` +
-            `🧠 *Diagnóstico IA:* ${aiDiagnosis}\n\n` +
-            `💡 *Ação Recomendada:* ${suggestedAction}`;
-
-          await sendWhatsAppAlert(alertMsg);
+            clicks: currStats.clicks,
+            impressions: currStats.impressions,
+            position: 15
+          });
+          aiDiagnosis = `A IA Gemini sugere atualizar para a copy: "${aiResult.title}". Meta: ${aiResult.metaDescription}`;
+        } catch (e) {
+          // Utiliza diagnóstico padrão em caso de erro na API
         }
+
+        const alertItem: TrafficDropAlert = {
+          siteId: site.id,
+          siteName: site.name,
+          url: page,
+          query: query,
+          prevImpressions: prevStats.impressions,
+          currImpressions: currStats.impressions,
+          dropPercent: Number(imprDropPct.toFixed(1)),
+          prevClicks: prevStats.clicks,
+          currClicks: currStats.clicks,
+          aiDiagnosis,
+          suggestedAction,
+          detectedAt: new Date().toISOString()
+        };
+
+        alerts.push(alertItem);
+
+        // Dispara alerta preditivo urgente via WhatsApp + Telegram
+        const urlPath = page.replace(/^https?:\/\/[^\/]+/, "");
+        const alertMsg =
+          `🚨 *ALERTA PREDITIVO DE QUEDA DE TRÁFEGO (WoW)*\n\n` +
+          `🌐 *Site:* ${site.name}\n` +
+          `📄 *Página:* \`${urlPath}\`\n` +
+          `🔑 *Palavra-chave:* "${query}"\n` +
+          `📉 *Queda de Impressões:* -${alertItem.dropPercent}% (${prevStats.impressions} ➔ ${currStats.impressions})\n` +
+          `🖱️ *Cliques:* ${prevStats.clicks} ➔ ${currStats.clicks}\n\n` +
+          `🧠 *Diagnóstico IA:* ${aiDiagnosis}\n\n` +
+          `💡 *Ação Recomendada:* ${suggestedAction}`;
+
+        await sendWhatsAppAlert(alertMsg);
       }
     } catch (e: any) {
       console.error(`[Traffic Drop Detector] Erro ao analisar site ${site.name}:`, e.message);

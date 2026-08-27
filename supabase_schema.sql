@@ -392,4 +392,44 @@ CREATE TABLE IF NOT EXISTS bi_schema_snippets (
 
 CREATE INDEX IF NOT EXISTS idx_bi_schema_site_gain ON bi_schema_snippets(site_id, potential_click_gain DESC);
 
+-- 18. Report Snapshots — Histórico de relatórios temporais gerados com atribuição
+CREATE TABLE IF NOT EXISTS bi_report_snapshots (
+  id BIGSERIAL PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  granularity TEXT NOT NULL CHECK (granularity IN ('daily', 'weekly', 'monthly')),
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  generated_at TIMESTAMPTZ DEFAULT NOW(),
+  report_data JSONB NOT NULL,
+  pdf_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_bi_snapshots_site_date ON bi_report_snapshots(site_id, granularity, generated_at DESC);
+
+-- 19. BI Daily Data Warehouse — Consolidação de métricas históricas multi-fonte diárias
+CREATE TABLE IF NOT EXISTS bi_daily_warehouse (
+  id BIGSERIAL PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  date DATE NOT NULL,
+  clicks INTEGER DEFAULT 0,
+  impressions INTEGER DEFAULT 0,
+  ctr DOUBLE PRECISION DEFAULT 0.0,
+  position DOUBLE PRECISION DEFAULT 0.0,
+  seo_score INTEGER DEFAULT 0,
+  health_index INTEGER DEFAULT 0,
+  cwv_lcp_sec DOUBLE PRECISION DEFAULT 0.0,
+  indexed_urls INTEGER DEFAULT 0,
+  ga4_users INTEGER DEFAULT 0,
+  ga4_sessions INTEGER DEFAULT 0,
+  conversions INTEGER DEFAULT 0,
+  estimated_revenue DOUBLE PRECISION DEFAULT 0.0,
+  adsense_revenue DOUBLE PRECISION DEFAULT 0.0,
+  top_keywords_json JSONB DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (site_id, date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_bi_warehouse_site_date ON bi_daily_warehouse(site_id, date DESC);
+
 

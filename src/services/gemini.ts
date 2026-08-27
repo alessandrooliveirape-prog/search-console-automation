@@ -14,7 +14,7 @@ export type OptimizationResult = {
 };
 
 export async function optimizeMetadata(input: OptimizationInput): Promise<OptimizationResult> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const prompt = `
 Você é um especialista em SEO técnico e Copywriting para conversão.
@@ -117,7 +117,7 @@ export type IndexingDiagnosisResult = {
 };
 
 export async function diagnoseIndexingIssue(input: IndexingDiagnosisInput): Promise<IndexingDiagnosisResult> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const prompt = `
 Você é um Engenheiro de Software Sênior e Especialista em SEO Técnico no Google Search Console.
@@ -189,7 +189,7 @@ Retorne os dados estritamente no formato JSON com as propriedades "summary", "ac
  * Usada pelo AI Insights para gerar análises com dados reais.
  */
 export async function generateTextWithGemini(prompt: string): Promise<string> {
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const requestBody = {
     contents: [{ parts: [{ text: prompt }] }],

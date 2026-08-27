@@ -145,10 +145,9 @@ export async function runDailyPerformanceJob() {
             // Ignora se der erro na leitura do HTML original
           }
 
-          // Executa a otimização com o Gemini
-          const isPosGreaterThan30 = (op.position || 0) > 30;
+          // Executa a otimização com o Gemini (Regra: Posição >= 20 aprova automaticamente)
+          const isAutoApprovePos = (op.position || 0) >= 20;
 
-          // Executa a otimização com o Gemini
           const optimized = await optimizeMetadata({
             url: op.page,
             query: op.query,
@@ -157,8 +156,8 @@ export async function runDailyPerformanceJob() {
             position: op.position
           });
 
-          // Se a posição for > 30, executa/aprova automaticamente
-          const isApproved = isPosGreaterThan30;
+          // Se a posição for >= 20, executa/aprova automaticamente
+          const isApproved = isAutoApprovePos;
 
           // Grava a sugestão no Supabase com 'approved' dependendo da posição
           const { data: upsertedData, error } = await supabase
@@ -181,9 +180,9 @@ export async function runDailyPerformanceJob() {
           if (error) {
             console.error(`[SEO Agent] Erro ao gravar otimização no Supabase para ${op.page}:`, error.message);
           } else {
-            console.log(`[SEO Agent] Sugestão salva no Supabase para: ${op.page} (Auto-Executada: ${isApproved})`);
+            console.log(`[SEO Agent] Sugestão salva no Supabase para: ${op.page} (Auto-Executada >=20: ${isApproved})`);
             
-            if (isPosGreaterThan30) {
+            if (isAutoApprovePos) {
               // 1. Notifica auto-execução via WhatsApp e Telegram
               await sendAutoExecutionAlert({
                 siteName: site.name,
@@ -199,8 +198,9 @@ export async function runDailyPerformanceJob() {
 
               // 2. Dispara IndexNow ping para Bing/Yandex/DuckDuckGo instantâneo
               const { sendIndexNowPing } = await import("../services/indexNow");
+              const siteHost = site.id.replace("sc-domain:", "").replace(/^https?:\/\//, "").replace(/\/.*$/, "");
               await sendIndexNowPing({
-                host: site.name,
+                host: siteHost,
                 urlList: [op.page]
               });
 
