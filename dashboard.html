@@ -2397,6 +2397,8 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     { site_id: "https://www.toolbrasil.com.br/", page: "https://www.toolbrasil.com.br/ferramenta/gerador-rifas", query: "gerador de rifa online", clicks: 160, impressions: 3120, ctr: 0.0513, position: 4.1 }
   ];
 
+  let allRawPerf = [];
+
   async function loadDashboardData(showNotice = false) {
     const tag = document.getElementById("lastUpdatedTag");
     if (tag) tag.innerText = "⏳ Atualizando...";
@@ -2409,10 +2411,10 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
           .order("date", { ascending: false })
           .limit(5000);
         
-        const rawPerf = Array.isArray(dbPerf) && dbPerf.length > 0 ? dbPerf : [];
-        allCtrData = aggregatePerformanceRows(rawPerf);
+        allRawPerf = Array.isArray(dbPerf) && dbPerf.length > 0 ? dbPerf : [];
+        allCtrData = aggregatePerformanceRows(allRawPerf);
 
-        if (allCtrData.length === 0 || allCtrData.reduce((a,c) => a + c.clicks, 0) < 100) {
+        if (allCtrData.length === 0) {
           allCtrData = defaultRichPerfData;
         }
 
@@ -2537,9 +2539,10 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     currentFilteredCtr = selectedSite === "ALL" ? allCtrData : allCtrData.filter(i => i.site_id === selectedSite);
     currentFilteredAi = selectedSite === "ALL" ? allAiOverrides : allAiOverrides.filter(i => i.site_id === selectedSite);
     currentFilteredAudit = selectedSite === "ALL" ? allIndexingAudit : allIndexingAudit.filter(i => i.site_id === selectedSite);
+    const filteredRawPerf = selectedSite === "ALL" ? allRawPerf : allRawPerf.filter(i => i.site_id === selectedSite);
 
     updateBannerStats(currentFilteredCtr);
-    updateChartData(currentFilteredCtr);
+    updateChartData(filteredRawPerf);
 
     renderCtrOpportunities(currentFilteredCtr);
     renderBiDashboard(selectedSite);
@@ -2560,7 +2563,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const totalClicks = currentFilteredCtr.reduce((a,c) => a + c.clicks, 0);
     const totalImpr = currentFilteredCtr.reduce((a,c) => a + c.impressions, 0);
 
-    const baseClicks = totalClicks > 0 ? totalClicks * 30 : 47950;
+    const baseClicks = totalClicks * 30;
     let multiplier = siteId === "sc-domain:empregape.com.br" ? 1 : siteId === "sc-domain:brasilcalculadoras.com.br" ? 0.7 : siteId.includes("mestredafederal") ? 0.5 : siteId.includes("toolbrasil") ? 0.2 : 1;
 
     let f30 = Math.round(baseClicks * multiplier).toLocaleString("pt-BR");
@@ -2568,27 +2571,32 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     let f90 = Math.round(baseClicks * 3.55 * multiplier).toLocaleString("pt-BR");
     let f365 = Math.round(baseClicks * 19.4 * multiplier).toLocaleString("pt-BR");
 
+    const rpc = 0.45; // Receita média por clique real
+    const estRevMonth = (baseClicks * rpc * multiplier).toFixed(2);
+    const estRevAdSense = (baseClicks * rpc * 0.6 * multiplier).toFixed(2);
+    const estRevYear = (baseClicks * 12 * rpc * multiplier).toFixed(2);
+
     if (forecastGrid) {
       forecastGrid.innerHTML = `
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
           <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">30 DIAS</div>
           <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f30} Cliques</div>
-          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(2019.6 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(parseFloat(estRevMonth)).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
           <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">60 DIAS</div>
           <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f60} Cliques</div>
-          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(4413.2 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(parseFloat(estRevMonth) * 2.18).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
           <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">90 DIAS</div>
           <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f90} Cliques</div>
-          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(7180.8 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(parseFloat(estRevMonth) * 3.55).toFixed(2)} est.</div>
         </div>
         <div class="property-item" style="flex-direction:column;align-items:flex-start;">
           <div style="font-size:0.67rem;color:var(--text-muted);font-weight:600;">12 MESES</div>
           <div style="font-size:0.96rem;font-weight:700;color:#34d399;">+${f365} Cliques</div>
-          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${(39270 * multiplier).toFixed(2)} est.</div>
+          <div style="font-size:0.73rem;color:var(--color-secondary);">R$ ${estRevYear} est.</div>
         </div>
       `;
     }
@@ -2597,37 +2605,38 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     if (revContainer) {
       revContainer.innerHTML = `
         <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
-          <span>Receita Mensal Estimada:</span><strong style="color:#34d399;">R$ ${(1870 * multiplier).toFixed(2)}</strong>
+          <span>Receita Mensal Estimada:</span><strong style="color:#34d399;">R$ ${estRevMonth}</strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
-          <span>Receita AdSense:</span><strong style="color:#38bdf8;">R$ ${(830 * multiplier).toFixed(2)}</strong>
+          <span>Receita AdSense:</span><strong style="color:#38bdf8;">R$ ${estRevAdSense}</strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border-color);padding-bottom:5px;">
-          <span>Receita por Clique (RPC):</span><strong>R$ 1,10 / clique</strong>
+          <span>Receita por Clique (RPC):</span><strong>R$ 0,45 / clique</strong>
         </div>
         <div style="display:flex;justify-content:space-between;">
-          <span>Projeção Anual de Receita:</span><strong style="color:#fde68a;">R$ ${(22440 * multiplier).toFixed(2)}</strong>
+          <span>Projeção Anual de Receita:</span><strong style="color:#fde68a;">R$ ${estRevYear}</strong>
         </div>
       `;
     }
 
     const goalsContainer = document.getElementById("goalsProgressContainer");
     if (goalsContainer) {
+      const clickGoalPct = Math.min(100, (totalClicks / 450)).toFixed(1);
       goalsContainer.innerHTML = `
         <div>
           <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;">
-            <span>Cliques Mensais (Meta 45.000)</span><strong>${totalClicks > 0 ? (totalClicks/450).toFixed(1) : '98.8'}% (${(totalClicks || 44460).toLocaleString('pt-BR')})</strong>
+            <span>Cliques Mensais (Meta 45.000)</span><strong>${clickGoalPct}% (${totalClicks.toLocaleString('pt-BR')})</strong>
           </div>
           <div style="width:100%;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-            <div style="width:${totalClicks > 0 ? Math.min(100, (totalClicks/450)).toFixed(1) : '98.8'}%;height:100%;background:#10b981;"></div>
+            <div style="width:${clickGoalPct}%;height:100%;background:#10b981;"></div>
           </div>
         </div>
         <div>
           <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;">
-            <span>Receita Mensal (Meta R$ 2.000)</span><strong>93.5% (R$ ${(1870 * multiplier).toFixed(2)})</strong>
+            <span>Receita Mensal (Meta R$ 2.000)</span><strong>${Math.min(100, (parseFloat(estRevMonth)/20)).toFixed(1)}% (R$ ${estRevMonth})</strong>
           </div>
           <div style="width:100%;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-            <div style="width:93.5%;height:100%;background:#38bdf8;"></div>
+            <div style="width:${Math.min(100, (parseFloat(estRevMonth)/20)).toFixed(1)}%;height:100%;background:#38bdf8;"></div>
           </div>
         </div>
       `;
@@ -2843,47 +2852,83 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const grid = document.getElementById("ga4BreakdownGrid");
     if (!banner || !grid) return;
 
-    let totalClicks = currentFilteredCtr.reduce((a,c) => a + c.clicks, 0);
-    let users = Math.max(totalClicks, 3450);
-    let sessions = Math.round(users * 1.35);
-    let newUsers = Math.round(users * 0.72);
-    let conversions = Math.round(users * 0.045);
+    let filteredGa4 = siteId === "ALL" ? allGa4Metrics : allGa4Metrics.filter(g => g.site_id === siteId);
+    let latestMetrics = filteredGa4.length > 0 ? filteredGa4[0] : null;
 
-    banner.innerHTML = `
-      <div class="goal-stat"><span class="label">👥 Usuários</span><span class="value">${users.toLocaleString("pt-BR")}</span><span class="sub">↑ +14% GA4</span></div>
-      <div class="goal-stat"><span class="label">🔄 Sessões</span><span class="value">${sessions.toLocaleString("pt-BR")}</span><span class="sub">1.35 sessões/user</span></div>
-      <div class="goal-stat"><span class="label">✨ Novos Usuários</span><span class="value">${newUsers.toLocaleString("pt-BR")}</span><span class="sub">72% novos leitores</span></div>
-      <div class="goal-stat"><span class="label">⏱️ Tempo Médio</span><span class="value">2m 22s</span><span class="sub">Engajamento alto</span></div>
-      <div class="goal-stat"><span class="label">🎯 Conversões</span><span class="value">${conversions.toLocaleString("pt-BR")}</span><span class="sub">Taxa 4.5%</span></div>
-    `;
+    if (latestMetrics) {
+      const users = latestMetrics.users || 0;
+      const sessions = latestMetrics.sessions || 0;
+      const newUsers = latestMetrics.new_users || 0;
+      const avgSec = latestMetrics.avg_duration_sec || 0;
+      const mins = Math.floor(avgSec / 60);
+      const secs = avgSec % 60;
+      const timeStr = `${mins}m ${String(secs).padStart(2, '0')}s`;
+      const conversions = latestMetrics.conversions || 0;
+      const engRate = latestMetrics.engagement_rate != null ? (latestMetrics.engagement_rate * 100).toFixed(1) : "0";
+      const sessPerUser = users > 0 ? (sessions / users).toFixed(2) : "1.00";
+      const newUserPct = users > 0 ? Math.round((newUsers / users) * 100) : 0;
+      const dateLabel = latestMetrics.date ? `Data: ${latestMetrics.date}` : "Sincronizado via GA4";
 
-    grid.innerHTML = `
-      <div class="card" style="padding:15px;">
-        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🌐 Origem / Mídia</div>
-        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
-          <div style="display:flex;justify-content:space-between;"><span>Google Orgânico</span><strong>65% (${Math.round(users*0.65).toLocaleString("pt-BR")})</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Direto</span><strong>18% (${Math.round(users*0.18).toLocaleString("pt-BR")})</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Telegram</span><strong>10% (${Math.round(users*0.10).toLocaleString("pt-BR")})</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Social</span><strong>7% (${Math.round(users*0.07).toLocaleString("pt-BR")})</strong></div>
+      banner.innerHTML = `
+        <div class="goal-stat"><span class="label">👥 Usuários</span><span class="value">${users.toLocaleString("pt-BR")}</span><span class="sub">${dateLabel}</span></div>
+        <div class="goal-stat"><span class="label">🔄 Sessões</span><span class="value">${sessions.toLocaleString("pt-BR")}</span><span class="sub">${sessPerUser} sessões/user</span></div>
+        <div class="goal-stat"><span class="label">✨ Novos Usuários</span><span class="value">${newUsers.toLocaleString("pt-BR")}</span><span class="sub">${newUserPct}% novos leitores</span></div>
+        <div class="goal-stat"><span class="label">⏱️ Tempo Médio</span><span class="value">${timeStr}</span><span class="sub">Engajamento ${engRate}%</span></div>
+        <div class="goal-stat"><span class="label">🎯 Conversões</span><span class="value">${conversions.toLocaleString("pt-BR")}</span><span class="sub">${(latestMetrics.page_views || 0).toLocaleString("pt-BR")} visualizações</span></div>
+      `;
+
+      // Top fontes
+      const sources = latestMetrics.top_sources || [];
+      const sourcesHtml = sources.length > 0
+        ? sources.map(s => `<div style="display:flex;justify-content:space-between;"><span>${s.source || s.sessionSource || 'Direto'}</span><strong>${s.users || 0} usuários</strong></div>`).join("")
+        : '<div style="color:var(--text-muted);">Sem dados de fontes para este filtro.</div>';
+
+      // Dispositivos
+      const devices = latestMetrics.top_devices || [];
+      const devicesHtml = devices.length > 0
+        ? devices.map(d => `<div style="display:flex;justify-content:space-between;"><span>${d.device || 'Mobile'}</span><strong>${d.percentage || 0}%</strong></div>`).join("")
+        : '<div style="color:var(--text-muted);">Sem dados de dispositivos.</div>';
+
+      // Países
+      const countries = latestMetrics.top_countries || [];
+      const countriesHtml = countries.length > 0
+        ? countries.map(c => `<div style="display:flex;justify-content:space-between;"><span>${c.country || 'Brasil'}</span><strong>${c.users || 0} usuários</strong></div>`).join("")
+        : '<div style="color:var(--text-muted);">Sem dados regionais.</div>';
+
+      grid.innerHTML = `
+        <div class="card" style="padding:15px;">
+          <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🌐 Origem / Mídia (Real GA4)</div>
+          <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+            ${sourcesHtml}
+          </div>
         </div>
-      </div>
-      <div class="card" style="padding:15px;">
-        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">📱 Dispositivos</div>
-        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
-          <div style="display:flex;justify-content:space-between;"><span>Mobile</span><strong>78.4%</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Desktop</span><strong>19.8%</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Tablet</span><strong>1.8%</strong></div>
+        <div class="card" style="padding:15px;">
+          <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">📱 Dispositivos</div>
+          <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+            ${devicesHtml}
+          </div>
         </div>
-      </div>
-      <div class="card" style="padding:15px;">
-        <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🚩 Países / Regiões</div>
-        <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
-          <div style="display:flex;justify-content:space-between;"><span>Brasil</span><strong>94% (${Math.round(users*0.94).toLocaleString("pt-BR")})</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Portugal</span><strong>3% (${Math.round(users*0.03).toLocaleString("pt-BR")})</strong></div>
-          <div style="display:flex;justify-content:space-between;"><span>Outros</span><strong>3% (${Math.round(users*0.03).toLocaleString("pt-BR")})</strong></div>
+        <div class="card" style="padding:15px;">
+          <div class="card-title" style="font-size:0.86rem;margin-bottom:10px;">🚩 Países / Regiões</div>
+          <div style="font-size:0.77rem;display:flex;flex-direction:column;gap:7px;">
+            ${countriesHtml}
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      banner.innerHTML = `
+        <div class="goal-stat"><span class="label">👥 Usuários</span><span class="value">0</span><span class="sub">Sem dados</span></div>
+        <div class="goal-stat"><span class="label">🔄 Sessões</span><span class="value">0</span><span class="sub">0 sessões/user</span></div>
+        <div class="goal-stat"><span class="label">✨ Novos Usuários</span><span class="value">0</span><span class="sub">0% novos leitores</span></div>
+        <div class="goal-stat"><span class="label">⏱️ Tempo Médio</span><span class="value">0m 00s</span><span class="sub">Sem sessões</span></div>
+        <div class="goal-stat"><span class="label">🎯 Conversões</span><span class="value">0</span><span class="sub">0 visualizações</span></div>
+      `;
+      grid.innerHTML = `
+        <div class="card" style="padding:15px;"><div class="card-title">🌐 Origem / Mídia</div><div style="color:var(--text-muted);font-size:0.77rem;">Nenhum dado do GA4 gravado para esta propriedade.</div></div>
+        <div class="card" style="padding:15px;"><div class="card-title">📱 Dispositivos</div><div style="color:var(--text-muted);font-size:0.77rem;">Nenhum dado do GA4 gravado para esta propriedade.</div></div>
+        <div class="card" style="padding:15px;"><div class="card-title">🚩 Países / Regiões</div><div style="color:var(--text-muted);font-size:0.77rem;">Nenhum dado do GA4 gravado para esta propriedade.</div></div>
+      `;
+    }
   }
 
   function renderPredictiveAi() {
@@ -3381,7 +3426,7 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     const dateMap = {};
     if (dbPerf && dbPerf.length > 0) {
       dbPerf.forEach(r => {
-        if (r.date && r.clicks > 0) {
+        if (r.date) {
           const d = r.date;
           if (!dateMap[d]) dateMap[d] = { clicks: 0, impr: 0 };
           dateMap[d].clicks += (r.clicks || 0);
@@ -3391,9 +3436,12 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
     }
 
     let keys = Object.keys(dateMap).sort();
-    if (keys.length >= 5) {
+    if (keys.length > 0) {
       if (keys.length > 14) keys = keys.slice(-14);
-      dates = keys;
+      dates = keys.map(k => {
+        const parts = k.split("-");
+        return parts.length === 3 ? `${parts[2]}/${parts[1]}` : k;
+      });
       clicks = keys.map(d => dateMap[d].clicks);
       imprs = keys.map(d => Math.round(dateMap[d].impr / 10));
     } else {
@@ -3403,18 +3451,8 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
         d.setDate(d.getDate() - i);
         dates.push(`${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth()+1).padStart(2, '0')}`);
       }
-
-      let siteMult = 1;
-      const selectedSite = document.getElementById("siteSelect") ? document.getElementById("siteSelect").value : "ALL";
-      if (selectedSite === "sc-domain:brasilcalculadoras.com.br") siteMult = 0.65;
-      else if (selectedSite.includes("mestredafederal")) siteMult = 0.45;
-      else if (selectedSite.includes("toolbrasil")) siteMult = 0.25;
-
-      const baseClicks = [65, 78, 90, 85, 110, 125, 140, 135, 150, 165, 180, 195, 210, 230];
-      const baseImpr = [120, 140, 160, 150, 190, 210, 240, 230, 260, 280, 310, 340, 370, 410];
-
-      clicks = baseClicks.map(v => Math.round(v * siteMult));
-      imprs = baseImpr.map(v => Math.round(v * siteMult));
+      clicks = new Array(14).fill(0);
+      imprs = new Array(14).fill(0);
     }
 
     chartInstance.data.labels = dates;
