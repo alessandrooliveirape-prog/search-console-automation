@@ -1703,11 +1703,12 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 
 <script>
   // SUPABASE CONFIGURATION
-  const SUPABASE_URL = window.ENV_SUPABASE_URL || "https://tezwamjdetiigwigvayt.supabase.co";
-  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlendhbWpkZXRpaWd3aWd2YXl0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mzk1NjEwMiwiZXhwIjoyMDk5NTMyMTAyfQ.Llq_wj0YbiKxsTNt5p-a2Ado8Cd-JWL6Gahq_qqlR8k";
+  // Injected via environment or window configuration
+  const SUPABASE_URL = window.ENV_SUPABASE_URL || "";
+  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || "";
   
   let supabaseClient = null;
-  if (window.supabase && SUPABASE_KEY) {
+  if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
 
