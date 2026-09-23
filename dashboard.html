@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- Local configuration (ignored by git) -->
+  <script src="config.js"></script>
   <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Chart.js CDN -->
@@ -1702,10 +1704,9 @@ CREATE TABLE IF NOT EXISTS seo_overrides (
 </div>
 
 <script>
-  // SUPABASE CONFIGURATION
-  // Injected via environment or window configuration
-  const SUPABASE_URL = window.ENV_SUPABASE_URL || "";
-  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || "";
+  // SUPABASE CONFIGURATION (Carregado com segurança via config.js local ou localStorage)
+  const SUPABASE_URL = window.ENV_SUPABASE_URL || localStorage.getItem("sb_url") || "https://tezwamjdetiigwigvayt.supabase.co";
+  const SUPABASE_KEY = window.ENV_SUPABASE_ANON_KEY || localStorage.getItem("sb_key") || "";
   
   let supabaseClient = null;
   if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
